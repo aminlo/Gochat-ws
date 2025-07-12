@@ -122,7 +122,7 @@ func createhubhandler(w http.ResponseWriter, r *http.Request) {
 	roomsMutex.Lock()
 	rooms[hub.hubid] = hub
 	roomsMutex.Unlock()
-
+	log.Println(hub)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"hubname": req.Name, "hubid": hub.hubid})
@@ -134,9 +134,17 @@ func createhubhandler(w http.ResponseWriter, r *http.Request) {
 
 func runhubhandler(w http.ResponseWriter, r *http.Request) {
 	hubid := chi.URLParam(r, "hubid")
+	log.Println("adada", hubid)
 	roomsMutex.RLock()
 	hub := rooms[hubid]
+
 	roomsMutex.RUnlock()
+	log.Println("Hub found:", hub)
+	log.Println("Rooms:", rooms)
+	if hub == nil {
+		http.Error(w, "Hub not found", http.StatusNotFound)
+		return
+	}
 	go hub.run()
 }
 

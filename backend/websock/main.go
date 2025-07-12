@@ -27,7 +27,7 @@ func main() {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Hello World!"))
 		})
-		r.Get("/ws/{id}", webshandler)
+		r.Get("/ws/{hubid}", webshandler)
 		r.Route("/dashboard", func(r chi.Router) {
 			// r.Get("/", dashhandler)
 			r.Post("/create", createhubhandler)
