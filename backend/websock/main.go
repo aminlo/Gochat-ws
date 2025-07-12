@@ -11,8 +11,9 @@ import (
 
 func main() {
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+
 	r.Group(func(r chi.Router) {
+		r.Use(middleware.Logger)
 		r.Use(cors.Handler(cors.Options{
 			// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
 			AllowedOrigins: []string{"https://*", "http://*"},
@@ -26,16 +27,21 @@ func main() {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Hello World!"))
 		})
-		r.Get("/ws", webshandler)
+		r.Get("/ws/{id}", webshandler)
+		r.Route("/dashboard", func(r chi.Router) {
+			// r.Get("/", dashhandler)
+			r.Post("/create", createhubhandler)
+			r.Put("/run/{hubid}", runhubhandler)
+		})
 	})
-	chi.RegisterMethod("JELLO")
+	// chi.RegisterMethod("JELLO")
 
-	apiRouter := chi.NewRouter()
+	// apiRouter := chi.NewRouter()
 
-	// apiRouter.Get("/articles/{date}-{slug}", getArticle)
+	// // apiRouter.Get("/articles/{date}-{slug}", getArticle)
 
-	// Mounting the new Sub Router on the main router
-	r.Mount("/api", apiRouter)
+	// // Mounting the new Sub Router on the main router
+	// r.Mount("/api", apiRouter)
 	log.Printf("Starting server on port 3030")
 	http.ListenAndServe(":3000", r)
 
