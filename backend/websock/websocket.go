@@ -90,7 +90,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 func webshandler(w http.ResponseWriter, r *http.Request) {
 	hubid := chi.URLParam(r, "hubid")
 	roomsMutex.RLock()
-	hub = rooms[hubid]
+	hub := rooms[hubid]
 	roomsMutex.RUnlock()
 	serveWs(hub, w, r)
 }
@@ -135,7 +135,7 @@ func createhubhandler(w http.ResponseWriter, r *http.Request) {
 func runhubhandler(w http.ResponseWriter, r *http.Request) {
 	hubid := chi.URLParam(r, "hubid")
 	roomsMutex.RLock()
-	hub = rooms[hubid]
+	hub := rooms[hubid]
 	roomsMutex.RUnlock()
 	go hub.run()
 }
