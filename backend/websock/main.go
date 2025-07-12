@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/aminlo/Gochat-ws/internal/handler"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -27,11 +28,12 @@ func main() {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Hello World!"))
 		})
-		r.Get("/ws/{hubid}", webshandler)
+		r.Get("/ws/{hubid}", handler.Webshandler)
 		r.Route("/dashboard", func(r chi.Router) {
 			// r.Get("/", dashhandler)
-			r.Post("/create", createhubhandler)
-			r.Put("/run/{hubid}", runhubhandler)
+			r.Post("/create", handler.Createhubhandler)
+			r.Post("/run/{hubid}", handler.Runhubhandler)
+			r.Get("/roominfo", handler.ListRoomsHandler)
 		})
 	})
 	// chi.RegisterMethod("JELLO")
