@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/aminlo/Gochat-ws/internal/handler"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -11,11 +12,12 @@ import (
 
 func main() {
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+
 	r.Group(func(r chi.Router) {
+		r.Use(middleware.Logger)
 		r.Use(cors.Handler(cors.Options{
 			// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
-			AllowedOrigins: []string{"https://*", "http://*"},
+			AllowedOrigins: []string{"*"},
 			// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 			AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
@@ -26,16 +28,22 @@ func main() {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Hello World!"))
 		})
-		r.Get("/ws", webshandler)
+		r.Get("/ws/{hubid}", handler.Webshandler)
+		r.Route("/dashboard", func(r chi.Router) {
+			// r.Get("/", dashhandler)
+			r.Post("/create", handler.Createhubhandler)
+			r.Post("/run/{hubid}", handler.Runhubhandler)
+			r.Get("/roominfo", handler.ListRoomsHandler)
+		})
 	})
-	chi.RegisterMethod("JELLO")
+	// chi.RegisterMethod("JELLO")
 
-	apiRouter := chi.NewRouter()
+	// apiRouter := chi.NewRouter()
 
-	// apiRouter.Get("/articles/{date}-{slug}", getArticle)
+	// // apiRouter.Get("/articles/{date}-{slug}", getArticle)
 
-	// Mounting the new Sub Router on the main router
-	r.Mount("/api", apiRouter)
+	// // Mounting the new Sub Router on the main router
+	// r.Mount("/api", apiRouter)
 	log.Printf("Starting server on port 3030")
 	http.ListenAndServe(":3000", r)
 
