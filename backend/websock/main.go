@@ -33,7 +33,7 @@ func main() {
 			// r.Get("/", dashhandler)
 			r.Post("/create", handler.Createhubhandler)
 			r.Post("/run/{hubid}", handler.Runhubhandler)
-			r.Get("/roominfo", handler.ListRoomsHandler)
+			r.Get("/roomlist", handler.ListRoomsHandler)
 		})
 	})
 	// chi.RegisterMethod("JELLO")

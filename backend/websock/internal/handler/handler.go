@@ -25,28 +25,56 @@ type Hub = models.Hub
 var rooms = make(map[string]*Hub)
 var roomsMutex = sync.RWMutex{}
 
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+// func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+// 	conn, err := upgrader.Upgrade(w, r, nil)
+// 	if err != nil {
+// 		log.Println(err)
+// 		return
+// 	}
+
+// 	hub.Register <- conn
+
+// 	defer func() {
+// 		hub.Unregister <- conn
+// 	}()
+
+// 	for {
+// 		_, message, err := conn.ReadMessage()
+// 		if err != nil {
+// 			log.Println(err)
+// 			break
+// 		}
+// 		// Broadcast to all clients instead of just echoing back
+// 		hub.Broadcast <- message
+// 	}
+// }
+
+func serveWs(hub *models.Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	hub.Register <- conn
-
-	defer func() {
-		hub.Unregister <- conn
-	}()
-
-	for {
-		_, message, err := conn.ReadMessage()
-		if err != nil {
-			log.Println(err)
-			break
-		}
-		// Broadcast to all clients instead of just echoing back
-		hub.Broadcast <- message
+	// Get username from query parameters
+	username := r.URL.Query().Get("username")
+	if username == "" {
+		username = "Anonymous" + uuid.New().String()[:3]
 	}
+
+	client := &models.Client{
+		ID:       uuid.New().String(),
+		Username: username,
+		Conn:     conn,
+		Hub:      hub,
+		Send:     make(chan *models.Message, 256),
+	}
+
+	client.Hub.Register <- client
+
+	// thi allows for continous write and read pump, seperated for functionality and cleanliness
+	go client.WritePump()
+	go client.ReadPump()
 }
 
 func Webshandler(w http.ResponseWriter, r *http.Request) {
@@ -79,11 +107,12 @@ func Createhubhandler(w http.ResponseWriter, r *http.Request) {
 	hub := &Hub{
 		Hubname:    req.Name,
 		Hubid:      uuid.New().String(),
-		Clients:    make(map[*websocket.Conn]bool),
-		Broadcast:  make(chan []byte),
-		Register:   make(chan *websocket.Conn),
-		Unregister: make(chan *websocket.Conn),
+		Clients:    make(map[*models.Client]bool),
+		Broadcast:  make(chan *models.Message),
+		Register:   make(chan *models.Client),
+		Unregister: make(chan *models.Client),
 		Active:     false,
+		Messages:   []*models.Message{},
 	}
 
 	roomsMutex.Lock()
@@ -123,7 +152,6 @@ type RoomInfo struct {
 	ClientCount int    `json:"client_count"`
 }
 
-// List all rooms
 func ListRoomsHandler(w http.ResponseWriter, r *http.Request) {
 	roomsMutex.RLock()
 	defer roomsMutex.RUnlock()
