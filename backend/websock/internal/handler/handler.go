@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/aminlo/Gochat-ws/internal/models"
+	"github.com/aminlo/Gochat-ws/internal/sql/db"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -24,6 +25,11 @@ type Hub = models.Hub
 
 var rooms = make(map[string]*Hub)
 var roomsMutex = sync.RWMutex{}
+
+type Config struct {
+	JWTstring string
+	DbQueries *db.Queries
+}
 
 // func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 // 	conn, err := upgrader.Upgrade(w, r, nil)
