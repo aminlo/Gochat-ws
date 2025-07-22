@@ -16,19 +16,25 @@ type contextKey string
 
 func (h *Config) RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token, err := auth.GetBearerToken(r.Header)
+		cookie, err := r.Cookie("token")
 		if err != nil {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			log.Println("fail auyth")
+			log.Println("auth failed: no token cookie")
 			return
 		}
 
-		userID, err := auth.ValidateJWT(token, h.JWTstring)
+		EmailID, err := auth.ValidateJWT(cookie.Value, h.JWTstring)
 		if err != nil {
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
-		ctx := context.WithValue(r.Context(), contextKey("userID"), userID)
+		user, err := h.DbQueries.GetUserByEmail(r.Context(), EmailID)
+		if err != nil {
+			http.Error(w, "User not found", http.StatusUnauthorized)
+			log.Println("auth failed: user not found:", err)
+			return
+		}
+		ctx := context.WithValue(r.Context(), contextKey("user"), user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -47,7 +53,7 @@ func (cfg *Config) Userlogin(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request body", "details": err.Error()})
 		return
 	}
-	user, err := cfg.DbQueries.GetPwByEmail(r.Context(), login.Emailid)
+	user, err := cfg.DbQueries.GetUserByEmail(r.Context(), login.Emailid)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -62,7 +68,7 @@ func (cfg *Config) Userlogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jwtmade, err := auth.MakeJWT(user.ID, cfg.JWTstring, 3600*time.Second)
+	jwtmade, err := auth.MakeJWT(user.Email, cfg.JWTstring, 3600*time.Second)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)

@@ -104,13 +104,20 @@ type CreateRoomResponse struct {
 	Name   string `json:"name"`
 }
 
-func Createhubhandler(w http.ResponseWriter, r *http.Request) {
+func (Cfg *Config) Createhubhandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := r.Context().Value(contextKey("user")).(db.User)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	var req CreateHubReq
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 	hub := &Hub{
+		Owner:      user.ID,
 		Hubname:    req.Name,
 		Hubid:      uuid.New().String(),
 		Clients:    make(map[*models.Client]bool),
@@ -124,6 +131,17 @@ func Createhubhandler(w http.ResponseWriter, r *http.Request) {
 	roomsMutex.Lock()
 	rooms[hub.Hubid] = hub
 	roomsMutex.Unlock()
+	params := db.CreateHubParams{
+		ID:      hub.Hubid,
+		Name:    hub.Hubname,
+		OwnerID: hub.Owner,
+	}
+	err := Cfg.DbQueries.CreateHub(r.Context(), params)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusUnauthorized)
+		log.Println("auth failed: user not found:", err)
+		return
+	}
 	log.Println(hub)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -156,6 +174,7 @@ type RoomInfo struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	ClientCount int    `json:"client_count"`
+	RoomActive  bool   `json:"roomactive"`
 }
 
 func ListRoomsHandler(w http.ResponseWriter, r *http.Request) {
@@ -166,15 +185,49 @@ func ListRoomsHandler(w http.ResponseWriter, r *http.Request) {
 	for id, hub := range rooms {
 		hub.Mutex.RLock()
 		clientCount := len(hub.Clients)
+		roomactive := hub.Active
 		hub.Mutex.RUnlock()
 
 		roomList = append(roomList, RoomInfo{
 			ID:          id,
 			Name:        hub.Hubname,
 			ClientCount: clientCount,
+			RoomActive:  roomactive,
 		})
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(roomList)
+}
+
+func (h *Config) Ownroomshandler(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(contextKey("user")).(string)
+	if !ok || userID == "" {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	roomsMutex.RLock()
+	defer roomsMutex.RUnlock()
+
+	var ownRooms []RoomInfo
+	for id, hub := range rooms {
+		if hub.Owner != userID {
+			continue
+		}
+		hub.Mutex.RLock()
+		clientCount := len(hub.Clients)
+		roomactive := hub.Active
+		hub.Mutex.RUnlock()
+
+		ownRooms = append(ownRooms, RoomInfo{
+			ID:          id,
+			Name:        hub.Hubname,
+			ClientCount: clientCount,
+			RoomActive:  roomactive,
+		})
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(ownRooms)
 }

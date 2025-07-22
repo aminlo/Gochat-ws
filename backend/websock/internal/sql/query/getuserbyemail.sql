@@ -1,2 +1,2 @@
--- name: GetPwByEmail :one
+-- name: GetUserByEmail :one
 SELECT * FROM users WHERE email = ?;

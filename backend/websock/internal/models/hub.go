@@ -9,6 +9,7 @@ import (
 )
 
 type Hub struct {
+	Owner        string
 	Hubname      string
 	Hubid        string
 	Active       bool

@@ -3,12 +3,17 @@ package models
 import (
 	"encoding/json"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
+type ClientMap struct {
+	Map      map[string]*Client
+	MapMutex sync.RWMutex
+}
 type Client struct {
 	ID       string          `json:"id"`
 	Username string          `json:"username"`

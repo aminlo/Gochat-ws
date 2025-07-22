@@ -5,8 +5,20 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 )
+
+type Hub struct {
+	ID           string
+	Name         string
+	Description  sql.NullString
+	Active       sql.NullString
+	OwnerID      string
+	SaveMessages sql.NullBool
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
 
 type User struct {
 	ID             string

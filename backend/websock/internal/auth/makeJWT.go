@@ -6,12 +6,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func MakeJWT(userID string, tokenSecret string, expiresIn time.Duration) (string, error) {
+func MakeJWT(EmailID string, tokenSecret string, expiresIn time.Duration) (string, error) {
 	claims := &jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(expiresIn)),
 		Issuer:    "gochat-admin",
 		IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
-		Subject:   userID,
+		Subject:   EmailID,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	strtoken, err := token.SignedString([]byte(tokenSecret))
