@@ -200,31 +200,38 @@ func ListRoomsHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(roomList)
 }
 
-func (h *Config) Ownroomshandler(w http.ResponseWriter, r *http.Request) {
-	userID, ok := r.Context().Value(contextKey("user")).(string)
-	if !ok || userID == "" {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+type RoomList []RoomInfo
+
+func (cfg *Config) Ownroomshandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := r.Context().Value(contextKey("user")).(db.User)
+	if !ok {
+		http.Error(w, "Unauthorized (own rooms)", http.StatusUnauthorized)
 		return
 	}
 
-	roomsMutex.RLock()
-	defer roomsMutex.RUnlock()
-
+	userHubs, err := cfg.DbQueries.GetUsersHubs(r.Context(), user.ID)
+	if err != nil {
+		http.Error(w, "Failed to fetch user hubs", http.StatusInternalServerError)
+		log.Println("Error fetching user hubs:", err)
+		return
+	}
 	var ownRooms []RoomInfo
-	for id, hub := range rooms {
-		if hub.Owner != userID {
-			continue
-		}
-		hub.Mutex.RLock()
-		clientCount := len(hub.Clients)
-		roomactive := hub.Active
-		hub.Mutex.RUnlock()
 
+	for _, hub := range userHubs {
+		room, exists := rooms[hub.ID]
+		clientCount := 0
+		roomActive := false
+		if exists {
+			room.Mutex.RLock()
+			clientCount = len(room.Clients)
+			roomActive = room.Active
+			room.Mutex.RUnlock()
+		}
 		ownRooms = append(ownRooms, RoomInfo{
-			ID:          id,
-			Name:        hub.Hubname,
+			ID:          hub.ID,
+			Name:        hub.Name,
 			ClientCount: clientCount,
-			RoomActive:  roomactive,
+			RoomActive:  roomActive,
 		})
 	}
 
