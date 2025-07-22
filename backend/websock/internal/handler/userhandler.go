@@ -50,6 +50,7 @@ func (cfg *Config) Userlogin(w http.ResponseWriter, r *http.Request) {
 	user, err := cfg.DbQueries.GetPwByEmail(r.Context(), login.Emailid)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "idk", "details": err.Error()})
 		return
 	}
