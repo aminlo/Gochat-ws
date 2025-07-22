@@ -10,6 +10,7 @@ import (
 
 type User struct {
 	ID             string
+	Username       string
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	Email          string

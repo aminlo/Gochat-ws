@@ -81,8 +81,9 @@ func (cfg *Config) Userlogin(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type Email struct {
+type Signupdetails struct {
 	Emailid  string `json:"email"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
@@ -90,7 +91,7 @@ func (cfg *Config) Usersignup(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	log.Println("new user sign")
 
-	var userstruct Email
+	var userstruct Signupdetails
 	if err := json.NewDecoder(r.Body).Decode(&userstruct); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
@@ -110,6 +111,7 @@ func (cfg *Config) Usersignup(w http.ResponseWriter, r *http.Request) {
 	user, err := cfg.DbQueries.CreateUser(r.Context(), db.CreateUserParams{
 		ID:             uuid.New().String(),
 		Email:          userstruct.Emailid,
+		Username:       userstruct.Username,
 		HashedPassword: hashedpass,
 	})
 
@@ -125,6 +127,7 @@ func (cfg *Config) Usersignup(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"id":         user.ID,
+		"username":   user.Username,
 		"created_at": user.CreatedAt,
 		"updated_at": user.UpdatedAt,
 		"email":      user.Email,

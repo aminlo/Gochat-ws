@@ -10,7 +10,7 @@ import (
 )
 
 const getPwByEmail = `-- name: GetPwByEmail :one
-SELECT id, created_at, updated_at, email, hashed_password FROM users WHERE email = ?
+SELECT id, username, created_at, updated_at, email, hashed_password FROM users WHERE email = ?
 `
 
 func (q *Queries) GetPwByEmail(ctx context.Context, email string) (User, error) {
@@ -18,6 +18,7 @@ func (q *Queries) GetPwByEmail(ctx context.Context, email string) (User, error) 
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Username,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,

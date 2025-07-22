@@ -10,22 +10,29 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id, created_at, updated_at, email, hashed_password) 
-VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?, ?)
-RETURNING id, created_at, updated_at, email, hashed_password
+INSERT INTO users (id, username, created_at, updated_at, email, hashed_password) 
+VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?, ?)
+RETURNING id, username, created_at, updated_at, email, hashed_password
 `
 
 type CreateUserParams struct {
 	ID             string
+	Username       string
 	Email          string
 	HashedPassword string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.ID, arg.Email, arg.HashedPassword)
+	row := q.db.QueryRowContext(ctx, createUser,
+		arg.ID,
+		arg.Username,
+		arg.Email,
+		arg.HashedPassword,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Username,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
