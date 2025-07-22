@@ -1,13 +1,16 @@
 import { signup as Signup, login } from '../utils/auth'
 import { useState, useEffect } from "react";
 import Pingapi from '../utils/pingapi'
+import { useUser } from '../utils/usercontext';
+import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSignup, setIsSignup] = useState(true);
-
+    const { user, setUser } = useUser();
+    const navigate = useNavigate();
     useEffect(() => {
         Pingapi();
     }, []);
@@ -24,7 +27,8 @@ const AuthPage = () => {
 
                 const response = await login(email, password);
                 console.log('Login successful!', response);
-
+                setUser(response)
+                navigate('/dash');
             }
         } catch (error) {
             console.error(`${isSignup ? 'Signup' : 'Login'} failed:`, error.message);

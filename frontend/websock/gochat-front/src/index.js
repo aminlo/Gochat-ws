@@ -7,20 +7,25 @@ import Home from './pages/home'
 import Auth from './pages/auth'
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { UserProvider } from './utils/usercontext';
+import Dash from './pages/userdashboard'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="auth" element={<Auth />} />
+    <UserProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="auth" element={<Auth />} />
+            <Route path="dash" element={<Dash />} />
 
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  </React.StrictMode>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </UserProvider>
+  </React.StrictMode >
 );
 
 // If you want to start measuring performance in your app, pass a function
