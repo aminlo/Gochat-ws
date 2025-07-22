@@ -61,7 +61,7 @@ func main() {
 		r.Post("/singup", Cfg.Usersignup)
 		r.Route("/au", func(r chi.Router) {
 			r.Use(Cfg.RequireAuth)
-			// r.Get("/ownrooms", handler.Ownroomshandler)
+			r.Get("/ownrooms", Cfg.Ownroomshandler)
 			r.Post("/create", Cfg.Createhubhandler)
 			r.Post("/run/{hubid}", handler.Runhubhandler)
 
