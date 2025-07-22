@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -17,6 +18,7 @@ type contextKey string
 func (h *Config) RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("token")
+		fmt.Println(cookie)
 		if err != nil {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			log.Println("auth failed: no token cookie")
