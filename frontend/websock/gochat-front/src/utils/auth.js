@@ -20,6 +20,7 @@ export async function signup(email, username, password) {
 export async function login(email, password) {
     const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         },

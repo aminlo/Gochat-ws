@@ -9,4 +9,8 @@ export async function Createchat(hubname) {
         },
         body: JSON.stringify({ hubname })
     });
+    if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Login failed: ${error}`);
+    }
 }
