@@ -70,6 +70,16 @@ func (cfg *Config) Userlogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    jwtmade,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  time.Now().Add(3600 * time.Second),
+	})
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
@@ -77,7 +87,6 @@ func (cfg *Config) Userlogin(w http.ResponseWriter, r *http.Request) {
 		"created_at": user.CreatedAt,
 		"updated_at": user.UpdatedAt,
 		"email":      user.Email,
-		"token":      jwtmade,
 	})
 
 }
