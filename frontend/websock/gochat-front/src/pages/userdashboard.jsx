@@ -1,14 +1,15 @@
 import { useUser } from '../utils/usercontext';
 import { useNavigate } from 'react-router-dom';
-import { Createchat } from '../utils/userchatconfig'
+import { Createchat, Listrooms } from '../utils/userchatconfig'
 import { useState } from "react";
+import { useEffect } from "react";
 
 const Userdash = () => {
     const { user } = useUser();
     const date = new Date(user.created_at);
     const formatdate = date.toLocaleString()
     const [hubname, sethubname] = useState("");
-
+    const [roomlist, setRoomlist] = useState([]);
 
     const handleCreateChat = async (e) => {
         e.preventDefault();
@@ -21,6 +22,20 @@ const Userdash = () => {
         }
     };
 
+    const fetchlistrooms = async () => {
+
+        try {
+            const roomlist = await Listrooms();
+            console.log('Room list fetch!', roomlist);
+            setRoomlist(roomlist);
+        } catch (error) {
+            console.error("Failed to fetch list", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchlistrooms();
+    }, []);
 
 
     return (
@@ -43,8 +58,19 @@ const Userdash = () => {
                 />
                 <button type="submit">Create Chat</button>
             </form>
-
-        </div>
+            <div>
+                Ur rooms!:
+                {roomlist.map((room) => (
+                    <>
+                        <div>room id: {room.id}</div>
+                        <div>room name: {room.name}</div>
+                        <div>room isactive: {room.roomactive}</div>
+                        <div>room id: {room.client_count}</div>
+                        <br></br>
+                    </>
+                ))}
+            </div>
+        </div >
     )
 
 }

@@ -11,6 +11,21 @@ export async function Createchat(hubname) {
     });
     if (!response.ok) {
         const error = await response.text();
-        throw new Error(`Login failed: ${error}`);
+        throw new Error(`Create failed: ${error}`);
     }
+}
+
+export async function Listrooms() {
+    const response = await fetch(`${API_URL}/au/ownrooms`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+    if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`ROom fetch failed: ${error}`);
+    }
+    return response.json()
 }
