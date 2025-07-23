@@ -1,6 +1,6 @@
 import { useUser } from '../utils/usercontext';
 import { useNavigate } from 'react-router-dom';
-import { Createchat, Listrooms } from '../utils/userchatconfig'
+import { Createchat, Listrooms, Deleteroom } from '../utils/userchatconfig'
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -50,6 +50,25 @@ const Userdash = () => {
         fetchlistrooms();
     }, []);
 
+    const handleDeleteRoom = async (roomId) => {
+        if (window.confirm('Are you sure you want to delete this room?')) {
+            try {
+                await Deleteroom(roomId);
+                console.log('Room deleted successfully!');
+
+                // map to remove room instead of re fetching saving reqs
+                setRoomlist(roomlist.filter(room => room.id !== roomId));
+
+                if (selectedRoom && selectedRoom.id === roomId) {
+                    setSelectedRoom(null);
+                }
+
+            } catch (error) {
+                console.error("Failed to delete room:", error);
+                alert('Failed to delete room. Please try again.');
+            }
+        }
+    };
 
     return (
         <div>
@@ -73,7 +92,7 @@ const Userdash = () => {
             </form>
             <div>
                 Ur rooms!:
-                {roomlist.map((room) => (
+                {roomlist?.length > 0 && roomlist.map((room) => (
                     <div key={room.id}>
                         <div>room id: {room.id}</div>
                         <div>room name: {room.name}</div>
@@ -91,13 +110,17 @@ const Userdash = () => {
                             <h2>Room Details: {selectedRoom.name}</h2>
                             <div>
                                 <p><strong>Room ID:</strong> {selectedRoom.id}</p>
-                                <p><strong>Room Description:</strong> {selectedRoom.description}</p>
                                 <p><strong>Room Name:</strong> {selectedRoom.name}</p>
+                                <p><strong>Room Description:</strong> {selectedRoom.description}</p>
+
                                 <p><strong>Status:</strong> {selectedRoom.roomactive ? 'Active' : 'Inactive'}</p>
                                 <p><strong>Connected Users:</strong> {selectedRoom.client_count}</p>
                                 <p><strong>Save Messages:</strong> Yes/no</p>
                                 <p><strong>Run room</strong> Yes/no</p>
-                                <p><strong>Delete room</strong> Yes/no</p>
+                                <button type="button" onClick={() => handleDeleteRoom(selectedRoom.id)}
+                                    style={{ backgroundColor: 'red', color: 'white', marginRight: '10px' }}>
+                                    Delete Room
+                                </button>
                             </div>
 
                             <button type="button" onClick={closeRoomDetails}>Close</button>
