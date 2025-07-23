@@ -10,6 +10,17 @@ const Userdash = () => {
     const formatdate = date.toLocaleString()
     const [hubname, sethubname] = useState("");
     const [roomlist, setRoomlist] = useState([]);
+    const [selectedRoom, setSelectedRoom] = useState(null);
+
+
+    const handleInspectRoom = (room) => {
+        setSelectedRoom(room);
+    };
+
+    const closeRoomDetails = () => {
+        setSelectedRoom(null);
+    };
+
 
     const handleCreateChat = async (e) => {
         e.preventDefault();
@@ -17,6 +28,8 @@ const Userdash = () => {
         try {
             await Createchat(hubname);
             console.log('Hub make successful!');
+            sethubname("");
+            fetchlistrooms();
         } catch (error) {
             console.error("Failed to create chat:", error);
         }
@@ -61,18 +74,42 @@ const Userdash = () => {
             <div>
                 Ur rooms!:
                 {roomlist.map((room) => (
-                    <>
+                    <div key={room.id}>
                         <div>room id: {room.id}</div>
                         <div>room name: {room.name}</div>
-                        <div>room isactive: {room.roomactive}</div>
-                        <div>room id: {room.client_count}</div>
-                        <br></br>
-                    </>
+                        <div>room isactive: {room.roomactive ? 'Yes' : 'No'}</div>
+                        <div>client count: {room.client_count}</div>
+                        <button type="button" onClick={() => handleInspectRoom(room)}>inspect</button>
+                        <br />
+                    </div>
                 ))}
             </div>
-        </div >
-    )
+            <div>
+                {
+                    selectedRoom ? (
+                        <div>
+                            <h2>Room Details: {selectedRoom.name}</h2>
+                            <div>
+                                <p><strong>Room ID:</strong> {selectedRoom.id}</p>
+                                <p><strong>Room Description:</strong> {selectedRoom.description}</p>
+                                <p><strong>Room Name:</strong> {selectedRoom.name}</p>
+                                <p><strong>Status:</strong> {selectedRoom.roomactive ? 'Active' : 'Inactive'}</p>
+                                <p><strong>Connected Users:</strong> {selectedRoom.client_count}</p>
+                                <p><strong>Save Messages:</strong> Yes/no</p>
+                                <p><strong>Run room</strong> Yes/no</p>
+                                <p><strong>Delete room</strong> Yes/no</p>
+                            </div>
 
+                            <button type="button" onClick={closeRoomDetails}>Close</button>
+                            {/* You can add more room details here using selectedRoom */}
+                        </div>
+                    ) : (
+                        <div>Select a room to inspect</div>
+                    )
+                }
+            </div>
+        </div >
+    );
 }
 
 export default Userdash
