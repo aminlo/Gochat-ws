@@ -3,6 +3,7 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -352,6 +353,7 @@ func (cfg *Config) Updatehubhandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (cfg *Config) Deletehubhandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Beginigning delete func")
 	user, ok := r.Context().Value(contextKey("user")).(db.User)
 	if !ok {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -359,6 +361,7 @@ func (cfg *Config) Deletehubhandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hubid := chi.URLParam(r, "hubid")
+	log.Printf("Attempting to delete hub with ID: %s", hubid)
 	if hubid == "" {
 		http.Error(w, "Missing hub ID", http.StatusBadRequest)
 		return
@@ -380,11 +383,9 @@ func (cfg *Config) Deletehubhandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// delete in memory if exists
+	// delete in memory
 	roomsMutex.Lock()
-	if _, exists := rooms[hubid]; exists {
-		delete(rooms, hubid)
-	}
+	delete(rooms, hubid)
 	roomsMutex.Unlock()
 
 	w.Header().Set("Content-Type", "application/json")
