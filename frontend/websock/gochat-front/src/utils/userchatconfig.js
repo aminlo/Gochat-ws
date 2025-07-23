@@ -7,7 +7,7 @@ export async function Createchat(hubname) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ hubname })
+        body: JSON.stringify({ name: hubname })
     });
     if (!response.ok) {
         const error = await response.text();
