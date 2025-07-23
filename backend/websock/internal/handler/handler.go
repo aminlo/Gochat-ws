@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -152,29 +153,64 @@ func (Cfg *Config) Createhubhandler(w http.ResponseWriter, r *http.Request) {
 
 // }
 
-func Runhubhandler(w http.ResponseWriter, r *http.Request) {
+func (cfg *Config) Runhubhandler(w http.ResponseWriter, r *http.Request) {
 	hubid := chi.URLParam(r, "hubid")
-	log.Println("adada", hubid)
 	roomsMutex.RLock()
 	hub := rooms[hubid]
-
 	roomsMutex.RUnlock()
-	log.Println("Hub found:", hub)
-	log.Println("Rooms:", rooms)
 
 	if hub == nil {
 		http.Error(w, "Hub not found", http.StatusNotFound)
-		return
+		dbHub, err := cfg.DbQueries.GetHub(r.Context(), hubid)
+		if err != nil {
+			http.Error(w, "Hub not found", http.StatusNotFound)
+			return
+		}
+		hub = &Hub{
+			Owner:      dbHub.OwnerID,
+			Hubname:    dbHub.Name,
+			Hubid:      dbHub.ID,
+			Clients:    make(map[*models.Client]bool),
+			Broadcast:  make(chan *models.Message),
+			Register:   make(chan *models.Client),
+			Unregister: make(chan *models.Client),
+			Active:     false,
+			Messages:   []*models.Message{},
+		}
+		roomsMutex.Lock()
+		rooms[hubid] = hub
+		roomsMutex.Unlock()
+
+		if !hub.Active {
+			hub.Active = true
+			err := cfg.DbQueries.UpdateRoomActive(r.Context(), db.UpdateRoomActiveParams{
+				Active: hub.Active,
+				ID:     hubid,
+			})
+
+			if err != nil {
+				http.Error(w, "Failed to update hub status", http.StatusInternalServerError)
+				return
+			}
+
+			go hub.Run()
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"status": "running"})
 	}
-	hub.Active = true
-	go hub.Run()
 }
 
 type RoomInfo struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	ClientCount int    `json:"client_count"`
-	RoomActive  bool   `json:"roomactive"`
+	ID           string `json:"id"`
+	Name         string `json:"name"`
+	ClientCount  int    `json:"client_count"`
+	RoomActive   bool   `json:"roomactive"`
+	Description  string `json:"description,omitempty"`
+	OwnerID      string `json:"owner_id,omitempty"`
+	SaveMessages bool   `json:"save_messages,omitempty"`
+	CreatedAt    string `json:"created_at,omitempty"`
+	UpdatedAt    string `json:"updated_at,omitempty"`
 }
 
 func ListRoomsHandler(w http.ResponseWriter, r *http.Request) {
@@ -228,13 +264,130 @@ func (cfg *Config) Ownroomshandler(w http.ResponseWriter, r *http.Request) {
 			room.Mutex.RUnlock()
 		}
 		ownRooms = append(ownRooms, RoomInfo{
-			ID:          hub.ID,
-			Name:        hub.Name,
-			ClientCount: clientCount,
-			RoomActive:  roomActive,
+			ID:           hub.ID,
+			Name:         hub.Name,
+			ClientCount:  clientCount,
+			RoomActive:   roomActive,
+			Description:  hub.Description.String,
+			SaveMessages: hub.SaveMessages,
+			CreatedAt:    hub.CreatedAt.String(),
+			UpdatedAt:    hub.UpdatedAt.String(),
 		})
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(ownRooms)
+}
+
+type UpdateHubReq struct {
+	Name         *string `json:"name"`
+	Description  *string `json:"description"`
+	SaveMessages *bool   `json:"save_messages"`
+}
+
+func (cfg *Config) Updatehubhandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := r.Context().Value(contextKey("user")).(db.User)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	hubid := chi.URLParam(r, "hubid")
+	if hubid == "" {
+		http.Error(w, "Missing hub ID", http.StatusBadRequest)
+		return
+	}
+
+	var req UpdateHubReq
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Fetch hub from DB to check ownership
+	hub, err := cfg.DbQueries.GetHub(r.Context(), hubid)
+	if err != nil {
+		http.Error(w, "Hub not found", http.StatusNotFound)
+		return
+	}
+	if hub.OwnerID != user.ID {
+		http.Error(w, "Forbidden, not your room", http.StatusForbidden)
+		return
+	}
+
+	params := db.UpdateRoomsParams{
+		Name:         *req.Name,
+		SaveMessages: *req.SaveMessages,
+	}
+	if req.Description != nil {
+		params.Description = sql.NullString{String: *req.Description, Valid: true}
+	} else {
+		params.Description = sql.NullString{Valid: false}
+	}
+
+	err = cfg.DbQueries.UpdateRooms(r.Context(), params)
+	if err != nil {
+		http.Error(w, "Failed to update hub", http.StatusInternalServerError)
+		return
+	}
+
+	// check for if in memory exists
+	roomsMutex.Lock()
+	memHub, exists := rooms[hubid]
+	if exists {
+		if req.Name != nil {
+			memHub.Hubname = *req.Name
+		}
+		if req.Description != nil {
+			memHub.Description = *req.Description
+		}
+		if req.SaveMessages != nil {
+			memHub.SaveMessages = *req.SaveMessages
+		}
+	}
+	roomsMutex.Unlock()
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "updated"})
+}
+
+func (cfg *Config) Deletehubhandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := r.Context().Value(contextKey("user")).(db.User)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	hubid := chi.URLParam(r, "hubid")
+	if hubid == "" {
+		http.Error(w, "Missing hub ID", http.StatusBadRequest)
+		return
+	}
+
+	hub, err := cfg.DbQueries.GetHub(r.Context(), hubid)
+	if err != nil {
+		http.Error(w, "Hub not found", http.StatusNotFound)
+		return
+	}
+	if hub.OwnerID != user.ID {
+		http.Error(w, "Forbidden, not your room", http.StatusForbidden)
+		return
+	}
+
+	err = cfg.DbQueries.DeleteHub(r.Context(), hubid)
+	if err != nil {
+		http.Error(w, "Failed to delete hub", http.StatusInternalServerError)
+		return
+	}
+
+	// delete in memory if exists
+	roomsMutex.Lock()
+	if _, exists := rooms[hubid]; exists {
+		delete(rooms, hubid)
+	}
+	roomsMutex.Unlock()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"status": "deleted"})
 }

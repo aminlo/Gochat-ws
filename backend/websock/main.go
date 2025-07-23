@@ -63,7 +63,9 @@ func main() {
 			r.Use(Cfg.RequireAuth)
 			r.Get("/ownrooms", Cfg.Ownroomshandler)
 			r.Post("/create", Cfg.Createhubhandler)
-			r.Post("/run/{hubid}", handler.Runhubhandler)
+			r.Put("/updateroom/{hubid}", Cfg.Updatehubhandler)
+			r.Delete("/deleteroom/{hubid}", Cfg.Deletehubhandler)
+			r.Post("/run/{hubid}", Cfg.Runhubhandler)
 
 			// r.Get("/profile", handler.ListRoomsHandler)
 		})

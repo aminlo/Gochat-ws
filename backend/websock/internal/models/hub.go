@@ -12,6 +12,7 @@ type Hub struct {
 	Owner        string
 	Hubname      string
 	Hubid        string
+	Description  string
 	Active       bool
 	SaveMessages bool
 	Clients      map[*Client]bool

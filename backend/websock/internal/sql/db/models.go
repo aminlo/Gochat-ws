@@ -13,9 +13,9 @@ type Hub struct {
 	ID           string
 	Name         string
 	Description  sql.NullString
-	Active       sql.NullString
+	Active       bool
 	OwnerID      string
-	SaveMessages sql.NullBool
+	SaveMessages bool
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
