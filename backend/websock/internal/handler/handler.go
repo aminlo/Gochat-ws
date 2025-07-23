@@ -370,6 +370,7 @@ func (cfg *Config) Deletehubhandler(w http.ResponseWriter, r *http.Request) {
 	hub, err := cfg.DbQueries.GetHub(r.Context(), hubid)
 	if err != nil {
 		http.Error(w, "Hub not found", http.StatusNotFound)
+		log.Println(err)
 		return
 	}
 	if hub.OwnerID != user.ID {
