@@ -12,11 +12,11 @@ import (
 const getHub = `-- name: GetHub :one
 SELECT id, name, description, active, owner_id, save_messages, created_at, updated_at
 FROM hubs
-WHERE hubs.owner_id = ?
+WHERE hubs.id = ?
 `
 
-func (q *Queries) GetHub(ctx context.Context, ownerID string) (Hub, error) {
-	row := q.db.QueryRowContext(ctx, getHub, ownerID)
+func (q *Queries) GetHub(ctx context.Context, id string) (Hub, error) {
+	row := q.db.QueryRowContext(ctx, getHub, id)
 	var i Hub
 	err := row.Scan(
 		&i.ID,
