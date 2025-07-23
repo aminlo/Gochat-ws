@@ -20,20 +20,20 @@ func (h *Config) RequireAuth(next http.Handler) http.Handler {
 		cookie, err := r.Cookie("token")
 		fmt.Println(cookie)
 		if err != nil {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			log.Println("auth failed: no token cookie")
+			http.Error(w, "(mid) Unauthorized", http.StatusUnauthorized)
+			log.Println("(mid) auth failed: no token cookie")
 			return
 		}
 
 		EmailID, err := auth.ValidateJWT(cookie.Value, h.JWTstring)
 		if err != nil {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			http.Error(w, "(mid) Invalid token", http.StatusUnauthorized)
 			return
 		}
 		user, err := h.DbQueries.GetUserByEmail(r.Context(), EmailID)
 		if err != nil {
-			http.Error(w, "User not found", http.StatusUnauthorized)
-			log.Println("auth failed: user not found:", err)
+			http.Error(w, "(mid) User not found", http.StatusUnauthorized)
+			log.Println("(mid) auth failed: user not found:", err)
 			return
 		}
 		ctx := context.WithValue(r.Context(), contextKey("user"), user)
