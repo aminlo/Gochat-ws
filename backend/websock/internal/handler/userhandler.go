@@ -27,6 +27,7 @@ func (h *Config) RequireAuth(next http.Handler) http.Handler {
 
 		EmailID, err := auth.ValidateJWT(cookie.Value, h.JWTstring)
 		if err != nil {
+			log.Println("Validate errorr")
 			http.Error(w, "(mid) Invalid token", http.StatusUnauthorized)
 			return
 		}
@@ -37,6 +38,7 @@ func (h *Config) RequireAuth(next http.Handler) http.Handler {
 			return
 		}
 		ctx := context.WithValue(r.Context(), contextKey("user"), user)
+		log.Println("Now serving next func")
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
