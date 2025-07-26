@@ -180,25 +180,25 @@ func (cfg *Config) Runhubhandler(w http.ResponseWriter, r *http.Request) {
 		roomsMutex.Lock()
 		rooms[hubid] = hub
 		roomsMutex.Unlock()
+	}
+	if !hub.Active {
+		hub.Active = true
+		err := cfg.DbQueries.UpdateRoomActive(r.Context(), db.UpdateRoomActiveParams{
+			Active: hub.Active,
+			ID:     hubid,
+		})
 
-		if !hub.Active {
-			hub.Active = true
-			err := cfg.DbQueries.UpdateRoomActive(r.Context(), db.UpdateRoomActiveParams{
-				Active: hub.Active,
-				ID:     hubid,
-			})
-
-			if err != nil {
-				http.Error(w, "Failed to update hub status", http.StatusInternalServerError)
-				return
-			}
-
-			go hub.Run()
+		if err != nil {
+			http.Error(w, "Failed to update hub status", http.StatusInternalServerError)
+			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"status": "running"})
+		go hub.Run()
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "running"})
+
 }
 
 type RoomInfo struct {
