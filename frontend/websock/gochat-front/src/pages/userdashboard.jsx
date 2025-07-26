@@ -1,6 +1,6 @@
 import { useUser } from '../utils/usercontext';
 import { useNavigate } from 'react-router-dom';
-import { Createchat, Listrooms, Deleteroom, Updateroom } from '../utils/userchatconfig'
+import { Createchat, Listrooms, Deleteroom, Updateroom, Runroom } from '../utils/userchatconfig'
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -17,6 +17,20 @@ const Userdash = () => {
         description: '',
         save_messages: false
     });
+
+    const handleRunRoom = async (roomId) => {
+        try {
+            const result = await Runroom(roomId);
+            console.log('Room server started successfully!', result);
+            alert('Room server started successfully!');
+
+            await fetchlistrooms();
+
+        } catch (error) {
+            console.error("Failed to start room server:", error);
+            alert('Failed to start room server.');
+        }
+    };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
@@ -185,6 +199,13 @@ const Userdash = () => {
                                                             style={{ backgroundColor: 'blue', color: 'white' }}
                                                         >
                                                             Edit Room
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRunRoom(selectedRoom.id)}
+                                                            style={{ backgroundColor: 'green', color: 'white', marginRight: '10px' }}
+                                                        >
+                                                            Run Server
                                                         </button>
                                                         <button
                                                             type="button"
