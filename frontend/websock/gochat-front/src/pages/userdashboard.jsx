@@ -25,7 +25,6 @@ const Userdash = () => {
             alert('Room server started successfully!');
 
             await fetchlistrooms();
-
         } catch (error) {
             console.error("Failed to start room server:", error);
             alert('Failed to start room server.');
@@ -196,7 +195,7 @@ const Userdash = () => {
                                                         <button
                                                             type="button"
                                                             onClick={handleEditRoom}
-                                                            style={{ backgroundColor: 'blue', color: 'white' }}
+                                                            style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' }}
                                                         >
                                                             Edit Room
                                                         </button>
