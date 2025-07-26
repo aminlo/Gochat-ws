@@ -161,7 +161,6 @@ func (cfg *Config) Runhubhandler(w http.ResponseWriter, r *http.Request) {
 	roomsMutex.RUnlock()
 
 	if hub == nil {
-		http.Error(w, "Hub not found", http.StatusNotFound)
 		dbHub, err := cfg.DbQueries.GetHub(r.Context(), hubid)
 		if err != nil {
 			http.Error(w, "Hub not found", http.StatusNotFound)
