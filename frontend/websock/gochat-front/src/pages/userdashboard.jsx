@@ -1,6 +1,6 @@
 import { useUser } from '../utils/usercontext';
 import { useNavigate } from 'react-router-dom';
-import { Createchat, Listrooms, Deleteroom } from '../utils/userchatconfig'
+import { Createchat, Listrooms, Deleteroom, Updateroom } from '../utils/userchatconfig'
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -11,7 +11,61 @@ const Userdash = () => {
     const [hubname, sethubname] = useState("");
     const [roomlist, setRoomlist] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editForm, setEditForm] = useState({
+        name: '',
+        description: '',
+        save_messages: false
+    });
 
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setEditForm({
+            name: '',
+            description: '',
+            save_messages: false
+        });
+    };
+
+    const handleEditRoom = () => {
+        setEditForm({
+            name: selectedRoom.name || '',
+            description: selectedRoom.description || '',
+            save_messages: selectedRoom.save_messages || false
+        });
+        setIsEditing(true);
+    };
+
+    const handleUpdateRoom = async (e) => {
+        e.preventDefault();
+
+        try {
+            const updateData = {
+                name: editForm.name,
+                description: editForm.description,
+                save_messages: editForm.save_messages
+            };
+
+            await Updateroom(selectedRoom.id, updateData);
+            console.log('Room updated successfully!');
+
+            const updatedRoomList = roomlist.map(room =>
+                room.id === selectedRoom.id
+                    ? { ...room, ...updateData } // spread operator replaces data (overrides)
+                    : room
+            );
+            setRoomlist(updatedRoomList);
+
+            setSelectedRoom({ ...selectedRoom, ...updateData });
+
+            setIsEditing(false);
+            alert('Room updated successfully!');
+
+        } catch (error) {
+            console.error("Failed to update room:", error);
+            alert('Failed to update room. Please try again.');
+        }
+    };
 
     const handleInspectRoom = (room) => {
         setSelectedRoom(room);
@@ -109,22 +163,103 @@ const Userdash = () => {
                         <div>
                             <h2>Room Details: {selectedRoom.name}</h2>
                             <div>
-                                <p><strong>Room ID:</strong> {selectedRoom.id}</p>
-                                <p><strong>Room Name:</strong> {selectedRoom.name}</p>
-                                <p><strong>Room Description:</strong> {selectedRoom.description}</p>
+                                {
+                                    selectedRoom ? (
+                                        <div>
+                                            <h2>Room Details: {selectedRoom.name}</h2>
 
-                                <p><strong>Status:</strong> {selectedRoom.roomactive ? 'Active' : 'Inactive'}</p>
-                                <p><strong>Connected Users:</strong> {selectedRoom.client_count}</p>
-                                <p><strong>Save Messages:</strong> Yes/no</p>
-                                <p><strong>Run room</strong> Yes/no</p>
-                                <button type="button" onClick={() => handleDeleteRoom(selectedRoom.id)}
-                                    style={{ backgroundColor: 'red', color: 'white', marginRight: '10px' }}>
-                                    Delete Room
-                                </button>
+                                            {!isEditing ? (
+                                                // changes display mode 
+                                                <div>
+                                                    <p><strong>Room ID:</strong> {selectedRoom.id}</p>
+                                                    <p><strong>Room Name:</strong> {selectedRoom.name}</p>
+                                                    <p><strong>Room Description:</strong> {selectedRoom.description || 'No description'}</p>
+                                                    <p><strong>Save Messages:</strong> {selectedRoom.save_messages ? 'Yes' : 'No'}</p>
+                                                    <p><strong>Status:</strong> {selectedRoom.roomactive ? 'Active' : 'Inactive'}</p>
+                                                    <p><strong>Connected Users:</strong> {selectedRoom.client_count}</p>
+
+                                                    <div style={{ marginTop: '15px' }}>
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleEditRoom}
+                                                            style={{ backgroundColor: 'blue', color: 'white' }}
+                                                        >
+                                                            Edit Room
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleDeleteRoom(selectedRoom.id)}
+                                                            style={{ backgroundColor: 'red', color: 'white' }}
+                                                        >
+                                                            Delete Room
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                // in edit mode
+                                                <form onSubmit={handleUpdateRoom}>
+                                                    <div>
+                                                        <label>
+                                                            <strong>Room Name:</strong>
+                                                            <input
+                                                                type="text"
+                                                                value={editForm.name}
+                                                                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                                                                required
+                                                            />
+                                                        </label>
+                                                    </div>
+
+                                                    <div>
+                                                        <label>
+                                                            <strong>Description:</strong>
+                                                            <textarea
+                                                                value={editForm.description}
+                                                                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                                                                placeholder="Room description (optional)"
+                                                            />
+                                                        </label>
+                                                    </div>
+
+                                                    <div>
+                                                        <label>
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={editForm.save_messages}
+                                                                onChange={(e) => setEditForm({ ...editForm, save_messages: e.target.checked })}
+                                                            />
+                                                            <strong>Save Messages</strong>
+                                                        </label>
+                                                    </div>
+
+                                                    <div>
+                                                        <button
+                                                            type="submit"
+                                                            style={{ backgroundColor: 'green', color: 'white' }}
+                                                        >
+                                                            Save Changes
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleCancelEdit}
+                                                            style={{ backgroundColor: 'gray', color: 'white' }}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            )}
+
+
+                                        </div>
+                                    ) : (
+                                        <div>Select a room to inspect</div>
+                                    )
+                                }
                             </div>
 
                             <button type="button" onClick={closeRoomDetails}>Close</button>
-                            {/* You can add more room details here using selectedRoom */}
+
                         </div>
                     ) : (
                         <div>Select a room to inspect</div>

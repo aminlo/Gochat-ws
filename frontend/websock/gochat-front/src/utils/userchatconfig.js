@@ -45,13 +45,14 @@ export async function Deleteroom(roomid) {
     return response.json()
 }
 
-export async function Editroom(roomid) {
+export async function Updateroom(roomid, updatedata) {
     const response = await fetch(`${API_URL}/au/updateroom/${roomid}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         },
+        body: JSON.stringify(updatedata)
     });
     if (!response.ok) {
         const error = await response.text();
