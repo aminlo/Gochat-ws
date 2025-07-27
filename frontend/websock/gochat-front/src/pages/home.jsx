@@ -5,26 +5,35 @@ import { useUser } from '../utils/usercontext';
 const Home = () => {
     const { user } = useUser();
     return (
-        <div className="bg-white-gray-gradient">
-            <nav className="">
+        <div className="bg-white-gray-gradient flex flex-col items-center">
+            <nav className="w-full flex justify-center">
                 <div className="">Gochat</div>
             </nav>
+
             <div className="relative w-full flex justify-center">
                 <img
                     src="/images/catlaptop.jpg"
                     alt="Gochat Logo"
                     className="h-[50vh] w-full object-cover"
                 />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl font-bold text-white drop-shadow-lg">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl font-bold text-white drop-shadow-lg flex flex-col items-center">
                     The bla bla chat application!
+                    <br /> <br />
+                    {user ? (
+                        <button className="btn btn-success btn-xl rounded-full mt-4 w-[10vw]">
+                            <Link to="/dash">Hi {user.username}! <br></br>Go to dash</Link>
+                        </button>
+                    ) : (
+                        <button className="btn btn-success btn-xl rounded-full mt-4">
+                            <Link to="/auth">Join the action now! Signup/login here</Link>
+                        </button>
+                    )}
                 </div>
             </div>
-            <div className="flex flex-col items-center rounded-2xl shadow-lg bg-white p-6 w-[70vw]  mx-auto -translate-y-1/9">
-                <div>Login, Signup user or signup as dev rev</div>
-                <div>{user && (<p>your logged in {user.email}</p>)}</div>
-                <button className="btn btn-primary"><Link to="/auth">Signup/login here</Link></button>
 
-                <div>
+            <div className="flex flex-col items-center rounded-2xl shadow-lg bg-white p-6 w-[70vw] mx-auto -translate-y-1/9 mt-8">
+
+                <div className="">
                     Welcome to Gochat! This is a placeholder for a 500-word introduction or description of the application.
                     <br /><br />
                     Gochat is a modern web-based chat platform designed to connect users in real-time. Whether you are here to catch up with friends, collaborate with colleagues, or meet new people, Gochat provides a seamless and secure environment for all your communication needs.

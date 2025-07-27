@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
 .bg-white-gray-gradient {
     min-height: 100vh;
