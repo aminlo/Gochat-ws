@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+.bg-white-gray-gradient {
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #ffffff 0%, #e5e7eb 50%, #a7f3d0 100%);
+
+}

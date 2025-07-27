@@ -1,3 +1,4 @@
+import React from 'react';
 import { signup as Signup, login } from '../utils/auth'
 import { useState, useEffect } from "react";
 import Pingapi from '../utils/pingapi'

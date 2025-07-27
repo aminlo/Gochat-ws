@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-
+import '/src/pages/style.css';
 import Layout from './pages/layout';
 import Home from './pages/home'
 import Auth from './pages/auth'
@@ -17,7 +16,7 @@ root.render(
     <UserProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route path="/">
             <Route index element={<Home />} />
             <Route path="auth" element={<Auth />} />
             <Route path="dash" element={<Dash />} />
