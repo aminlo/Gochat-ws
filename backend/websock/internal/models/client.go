@@ -22,6 +22,7 @@ type Client struct {
 }
 
 func (c *Client) ReadPump() {
+	log.Printf("Client using hub at %p", c.Hub)
 	defer func() {
 		c.Hub.Unregister <- c
 		c.Conn.Close()
@@ -59,6 +60,7 @@ func (c *Client) ReadPump() {
 		// Send to hub for broadcasting
 		log.Println("Sending to hub:", message)
 		c.Hub.Broadcast <- message
+		log.Printf("Sent to hub.Broadcast")
 	}
 }
 

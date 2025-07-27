@@ -24,6 +24,7 @@ type Hub struct {
 }
 
 func (h *Hub) Run() {
+	log.Printf("start hub for hubid: %s at %p", h.Hubid, h)
 	for {
 		select {
 		case client := <-h.Register:
