@@ -5,9 +5,8 @@ import { useState } from "react";
 import { useEffect } from "react";
 
 const Userdash = () => {
-    const { user } = useUser();
-    const date = new Date(user.created_at);
-    const formatdate = date.toLocaleString()
+    const { user, loading } = useUser();
+    const navigate = useNavigate();
     const [hubname, sethubname] = useState("");
     const [roomlist, setRoomlist] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -17,6 +16,36 @@ const Userdash = () => {
         description: '',
         save_messages: false
     });
+
+    useEffect(() => {
+        if (user) {
+            fetchlistrooms();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (!loading && !user) {
+            const timer = setTimeout(() => {
+                navigate('/auth');
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [loading, user, navigate]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+    if (!user) {
+        return (
+            <div>
+                <div>Please log in</div>
+                <div>Redirecting to login page in 3 seconds...</div>
+            </div>
+        );
+    }
+
+    const date = new Date(user.created_at);
+    const formatdate = date.toLocaleString();
 
     const handleRunRoom = async (roomId) => {
         try {
@@ -113,9 +142,6 @@ const Userdash = () => {
         }
     };
 
-    useEffect(() => {
-        fetchlistrooms();
-    }, []);
 
     const handleDeleteRoom = async (roomId) => {
         if (window.confirm('Are you sure you want to delete this room?')) {
@@ -139,7 +165,7 @@ const Userdash = () => {
 
     return (
         <div>
-            Hi (username)
+            Hi {user.username}
             <div>{user.email}</div>
             <div>{user.id}</div>
             <div>{formatdate}</div>

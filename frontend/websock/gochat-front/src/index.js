@@ -20,7 +20,7 @@ root.render(
             <Route index element={<Home />} />
             <Route path="auth" element={<Auth />} />
             <Route path="dash" element={<Dash />} />
-            <Route path="ch/:hubId" element={<WSChat />} />
+            {/* <Route path="ch/:hubId" element={<WSChat />} /> */}
           </Route>
         </Routes>
       </BrowserRouter>

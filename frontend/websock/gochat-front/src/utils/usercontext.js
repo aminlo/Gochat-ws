@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const initializeUser = async () => {
             try {
-                const userData = await verifyUser();
+                const userData = await verifyuser();
                 setUser(userData);
                 console.log('User verified from JWT:', userData);
             } catch (error) {
