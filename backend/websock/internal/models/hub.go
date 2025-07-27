@@ -47,7 +47,7 @@ func (h *Hub) Run() {
 				},
 				Timestamp: time.Now(),
 			}
-			h.Broadcast <- joinMsg
+			h.broadcastMessage(joinMsg)
 
 		case client := <-h.Unregister:
 			h.Mutex.Lock()
@@ -72,7 +72,7 @@ func (h *Hub) Run() {
 				},
 				Timestamp: time.Now(),
 			}
-			h.Broadcast <- leaveMsg
+			h.broadcastMessage(leaveMsg)
 
 		case message := <-h.Broadcast:
 			log.Printf(" Broadcasting message: %+v", message)
