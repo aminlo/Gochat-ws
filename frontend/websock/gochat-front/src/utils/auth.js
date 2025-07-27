@@ -1,3 +1,4 @@
+
 const API_URL = 'http://localhost:3000';
 
 export async function signup(email, username, password) {
@@ -37,3 +38,18 @@ export async function login(email, password) {
 
 
 
+export async function verifyuser() {
+    const response = await fetch(`${API_URL}/au/verify`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error('Authentication failed');
+    }
+
+    return response.json();
+}
