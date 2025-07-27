@@ -74,6 +74,7 @@ func (h *Hub) Run() {
 			h.Broadcast <- leaveMsg
 
 		case message := <-h.Broadcast:
+			log.Printf(" Broadcasting message: %+v", message)
 			h.broadcastMessage(message)
 		}
 	}
