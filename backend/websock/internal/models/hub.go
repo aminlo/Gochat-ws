@@ -94,10 +94,13 @@ func (h *Hub) broadcastMessage(message *Message) {
 	// messageBytes, _ := json.Marshal(message)
 	h.Mutex.RLock()
 	for client := range h.Clients {
+		log.Printf(" Attempting to send to client: %s (%s)", client.Username, client.UserID)
 		select {
 		case client.Send <- message:
+			log.Printf("Sent message to %s", client.Username)
 		default:
 			// client's send channel is full, remove client
+			log.Printf("Send channel full for %s, removing client", client.Username)
 			delete(h.Clients, client)
 			close(client.Send)
 			client.Conn.Close()
