@@ -34,6 +34,7 @@ func (c *Client) ReadPump() {
 			break
 		}
 
+		log.Printf("message came: %s", string(webcontentbytes))
 		var incomingMsg struct {
 			Message string `json:"message"`
 			Type    string `json:"type"`
@@ -43,7 +44,7 @@ func (c *Client) ReadPump() {
 			log.Println("JSON unmarshal error:", err)
 			continue
 		}
-
+		log.Println("Parsed message:", incomingMsg)
 		// new message type, can expand future
 		message := &Message{
 			Type:    incomingMsg.Type,
@@ -56,6 +57,7 @@ func (c *Client) ReadPump() {
 		}
 
 		// Send to hub for broadcasting
+		log.Println("Sending to hub:", message)
 		c.Hub.Broadcast <- message
 	}
 }
@@ -64,6 +66,7 @@ func (c *Client) WritePump() {
 
 	for message := range c.Send {
 		webcontentbytes, _ := json.Marshal(message)
+		log.Printf("WritePump sending: %s", string(webcontentbytes))
 		if err := c.Conn.WriteMessage(websocket.TextMessage, webcontentbytes); err != nil {
 			log.Println("Write error:", err)
 			return
