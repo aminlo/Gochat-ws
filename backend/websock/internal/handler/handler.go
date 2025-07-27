@@ -208,6 +208,7 @@ func (cfg *Config) Runhubhandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		go hub.Run()
+		log.Printf("Started hub() for hubid: %s at %p", hub.Hubid, hub)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
