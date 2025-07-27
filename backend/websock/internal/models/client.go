@@ -6,7 +6,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -15,7 +14,7 @@ type ClientMap struct {
 	MapMutex sync.RWMutex
 }
 type Client struct {
-	ID       string          `json:"id"`
+	UserID   string          `json:"user_id"`
 	Username string          `json:"username"`
 	Conn     *websocket.Conn `json:"-"`
 	Hub      *Hub            `json:"-"`
@@ -36,7 +35,7 @@ func (c *Client) ReadPump() {
 		}
 
 		var incomingMsg struct {
-			Content string `json:"content"`
+			Message string `json:"message"`
 			Type    string `json:"type"`
 		}
 
@@ -47,12 +46,12 @@ func (c *Client) ReadPump() {
 
 		// new message type, can expand future
 		message := &Message{
-			ID:        uuid.New().String(),
-			Type:      incomingMsg.Type,
-			Content:   incomingMsg.Content,
-			UserID:    c.ID,
-			Username:  c.Username,
-			RoomID:    c.Hub.Hubid,
+			Type:    incomingMsg.Type,
+			Message: incomingMsg.Message,
+			User: map[string]interface{}{
+				"id":       c.UserID,
+				"username": c.Username,
+			},
 			Timestamp: time.Now(),
 		}
 

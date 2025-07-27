@@ -34,14 +34,16 @@ func (h *Hub) Run() {
 			log.Printf("client %s connected to room %s. Total: %d",
 				client.Username, h.Hubname, len(h.Clients))
 
+			h.sendUserListToNewClient(client) // so users kno what users are in room
 			// Send join message to all clients
 			joinMsg := &Message{
-				ID:        uuid.New().String(),
+				MessageID: uuid.New().String(),
 				Type:      string(MessageTypeJoin),
-				Content:   client.Username + " joined the room",
-				UserID:    client.ID,
-				Username:  client.Username,
-				RoomID:    h.Hubid,
+				Message:   client.Username + " joined the room",
+				User: map[string]any{
+					"id":       client.UserID,
+					"username": client.Username,
+				},
 				Timestamp: time.Now(),
 			}
 			h.Broadcast <- joinMsg
@@ -60,12 +62,13 @@ func (h *Hub) Run() {
 
 			// Send leave message to remaining clients
 			leaveMsg := &Message{
-				ID:        uuid.New().String(),
+				MessageID: uuid.New().String(),
 				Type:      string(MessageTypeLeave),
-				Content:   client.Username + " left the room",
-				UserID:    client.ID,
-				Username:  client.Username,
-				RoomID:    h.Hubid,
+				Message:   client.Username + " left the room",
+				User: map[string]interface{}{
+					"id":       client.UserID,
+					"username": client.Username,
+				},
 				Timestamp: time.Now(),
 			}
 			h.Broadcast <- leaveMsg
@@ -77,7 +80,7 @@ func (h *Hub) Run() {
 }
 
 func (h *Hub) broadcastMessage(message *Message) {
-	// Store message in history
+	// Store message in history, not implemented
 	if h.SaveMessages {
 		h.Mutex.Lock()
 		h.Messages = append(h.Messages, message)
@@ -101,4 +104,30 @@ func (h *Hub) broadcastMessage(message *Message) {
 		}
 	}
 	h.Mutex.RUnlock()
+}
+
+func (h *Hub) sendUserListToNewClient(newClient *Client) {
+	h.Mutex.RLock()
+	var users []map[string]interface{}
+	for client := range h.Clients {
+		users = append(users, map[string]interface{}{
+			"id":       client.UserID,
+			"username": client.Username,
+		})
+	}
+	h.Mutex.RUnlock()
+
+	userListMsg := &Message{
+		MessageID: uuid.New().String(),
+		Type:      "user_list",
+		Users:     users,
+		Timestamp: time.Now(),
+	}
+
+	// Send only to the new client
+	select {
+	case newClient.Send <- userListMsg:
+	default:
+		log.Println("Failed to send user list to new client")
+	}
 }

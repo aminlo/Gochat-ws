@@ -62,6 +62,7 @@ func main() {
 		r.Route("/au", func(r chi.Router) {
 			r.Use(Cfg.RequireAuth)
 			r.Get("/ownrooms", Cfg.Ownroomshandler)
+			r.Get("/ws/{hubid}", handler.Webshandler)
 			r.Post("/create", Cfg.Createhubhandler)
 			r.Put("/updateroom/{hubid}", Cfg.Updatehubhandler)
 			r.Delete("/deleteroom/{hubid}", Cfg.Deletehubhandler)

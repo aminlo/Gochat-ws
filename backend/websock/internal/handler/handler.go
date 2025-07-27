@@ -57,7 +57,7 @@ type Config struct {
 // 	}
 // }
 
-func serveWs(hub *models.Hub, w http.ResponseWriter, r *http.Request) {
+func serveWs(hub *models.Hub, w http.ResponseWriter, r *http.Request, user db.User) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -65,19 +65,15 @@ func serveWs(hub *models.Hub, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get username from query parameters
-	username := r.URL.Query().Get("username")
-	if username == "" {
-		username = "Anonymous" + uuid.New().String()[:3]
-	}
 
 	client := &models.Client{
-		ID:       uuid.New().String(),
-		Username: username,
+		UserID:   user.ID,
+		Username: user.Username,
 		Conn:     conn,
 		Hub:      hub,
 		Send:     make(chan *models.Message, 256),
 	}
-
+	log.Printf("Client created - UserID: %s, Username: %s", client.UserID, client.Username)
 	client.Hub.Register <- client
 
 	// thi allows for continous write and read pump, seperated for functionality and cleanliness
@@ -86,15 +82,31 @@ func serveWs(hub *models.Hub, w http.ResponseWriter, r *http.Request) {
 }
 
 func Webshandler(w http.ResponseWriter, r *http.Request) {
+	var user db.User
+	authuser, ok := r.Context().Value(contextKey("user")).(db.User)
+	if !ok {
+		user = db.User{
+			ID:       uuid.New().String(),
+			Username: "Anonymous" + uuid.New().String()[:4],
+		}
+	} else {
+		user = authuser
+	}
+
 	hubid := chi.URLParam(r, "hubid")
 	roomsMutex.RLock()
 	hub := rooms[hubid]
 	roomsMutex.RUnlock()
+
 	if hub == nil {
 		http.Error(w, "Hub not found", http.StatusNotFound)
 		return
 	}
-	serveWs(hub, w, r)
+	if !hub.Active {
+		http.Error(w, "Hub is not active", http.StatusServiceUnavailable)
+		return
+	}
+	serveWs(hub, w, r, user)
 }
 
 type CreateHubReq struct {
@@ -128,6 +140,7 @@ func (Cfg *Config) Createhubhandler(w http.ResponseWriter, r *http.Request) {
 		Unregister: make(chan *models.Client),
 		Active:     false,
 		Messages:   []*models.Message{},
+		Mutex:      sync.RWMutex{},
 	}
 
 	roomsMutex.Lock()
@@ -176,6 +189,7 @@ func (cfg *Config) Runhubhandler(w http.ResponseWriter, r *http.Request) {
 			Unregister: make(chan *models.Client),
 			Active:     false,
 			Messages:   []*models.Message{},
+			Mutex:      sync.RWMutex{},
 		}
 		roomsMutex.Lock()
 		rooms[hubid] = hub
