@@ -66,7 +66,7 @@ func main() {
 			r.Put("/updateroom/{hubid}", Cfg.Updatehubhandler)
 			r.Delete("/deleteroom/{hubid}", Cfg.Deletehubhandler)
 			r.Post("/run/{hubid}", Cfg.Runhubhandler)
-
+			r.Get("/verify", Cfg.VerifyUser)
 			// r.Get("/profile", handler.ListRoomsHandler)
 		})
 

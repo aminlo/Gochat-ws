@@ -94,11 +94,32 @@ func (cfg *Config) Userlogin(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"id":         user.ID,
+		"username":   user.Username,
 		"created_at": user.CreatedAt,
 		"updated_at": user.UpdatedAt,
 		"email":      user.Email,
 	})
 
+}
+
+func (cfg *Config) VerifyUser(w http.ResponseWriter, r *http.Request) {
+	user, ok := r.Context().Value(contextKey("user")).(db.User)
+	if !ok {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{"error": "User not found in context"})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"id":         user.ID,
+		"created_at": user.CreatedAt,
+		"updated_at": user.UpdatedAt,
+		"email":      user.Email,
+		"username":   user.Username,
+	})
 }
 
 type Signupdetails struct {
