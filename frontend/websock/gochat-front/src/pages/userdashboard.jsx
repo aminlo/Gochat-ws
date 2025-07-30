@@ -168,7 +168,7 @@ const Userdash = () => {
             <div className="rounded-2xl shadow-lg p-8 w-[80vw] h-[80vh] mx-auto my-12 bg-white ">
                 <div className="flex w-full h-full">
                     <div className="card bg-base-300 rounded-box grid  grow place-items-center basis-[30%]">
-                        <div class="flex w-full flex-col">
+                        <div className="flex w-full flex-col">
                             <div className="card bg-black/20 rounded-box grid w-[80%] p-5 mt-5 mx-auto">
                                 <div className="flex justify-center">
                                     <img
@@ -182,8 +182,8 @@ const Userdash = () => {
                                 <div><strong>User ID:</strong> {user.id}</div>
                                 <div><strong>Created:</strong> {formatdate}</div>
                             </div>
-                            <div class="divider w-[50%] mx-auto"></div>
-                            <div class="card rounded-box gridplace-items-center p-5 bg-black/20 mt-5 w-[80%] mx-auto">
+                            <div className="divider w-[50%] mx-auto"></div>
+                            <div className="card rounded-box gridplace-items-center p-5 bg-black/20 mt-5 w-[80%] mx-auto">
                                 <div><strong>Create hub</strong></div><br></br>
                                 <form onSubmit={handleCreateChat}>
                                     <input
@@ -194,18 +194,31 @@ const Userdash = () => {
                                         onChange={e => sethubname(e.target.value)}
                                         required
                                     />
-                                    <button type="submit" class="btn btn-neutral join-item">Create Chat</button><br></br>
+                                    <button type="submit" className="btn btn-neutral join-item">Create Chat</button><br></br>
                                 </form >
                                 <br></br>
                                 <div className="overflow-y-auto w-full " style={{ maxHeight: '35vh', minHeight: '35vh' }}>
                                     {roomlist?.length > 0 && roomlist.map((room) => (
                                         <div key={room.id}
                                             className="bg-white rounded shadow p-3 mb-3 flex flex-col pb-4">
-                                            <div>room id: {room.id}</div>
-                                            <div>room name: {room.name}</div>
-                                            <div>room isactive: {room.roomactive ? 'Yes' : 'No'}</div>
-                                            <div>client count: {room.client_count}</div>
-                                            <button type="button" className="btn btn-soft btn-success self-end mr-2px" onClick={() => handleInspectRoom(room)}>inspect</button>
+                                            <div className="inline-grid *:[grid-area:1/1]">
+                                                {room.roomactive ? (
+                                                    <>
+                                                        <div><div className="status status-success animate-ping"></div></div>
+                                                        <div className='text-green-700'><div className="status status-success "></div> <strong>Online</strong></div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div><div className="status status-error animate-ping"></div></div>
+                                                        <div className='text-red-500'><div className="status status-error"></div> <strong>Offline</strong></div>
+                                                    </>
+                                                )}
+                                            </div>
+                                            <div>Room id: {room.id}</div>
+                                            <div>Room name: {room.name}</div>
+                                            {room.roomactive && <div>Connected Users: {room.client_count}</div>}
+
+                                            <button type="button" className="btn btn-soft btn-primary self-end mr-2px" onClick={() => handleInspectRoom(room)}>inspect</button>
                                         </div>
                                     ))}
                                 </div>
@@ -213,11 +226,12 @@ const Userdash = () => {
                         </div>
                     </div>
                     <div className="divider divider-horizontal"></div>
+
+                    {/* right side */}
                     <div className="card bg-base-300 rounded-box grid grow place-items-center basis-[70%]">
                         {
                             selectedRoom ? (
-                                <div className="bg-black/20 p-10 rounded h-[95%] w-[95%]">
-                                    <h2><strong>Room:</strong> {selectedRoom.name}</h2>
+                                <div className="bg-black/20 rounded h-[95%] w-[95%] flex flex-col">
                                     <div >
                                         {
                                             selectedRoom ? (
@@ -226,42 +240,60 @@ const Userdash = () => {
                                                     {!isEditing ? (
                                                         // changes display mode 
                                                         <div>
+                                                            <div className="rounded w-full h-[10vw]">
+                                                                <img
+                                                                    src="https://t4.ftcdn.net/jpg/09/83/98/09/360_F_983980918_Put4YfWMOydwJ7hJtjEjpUly9SIlLQ1M.jpg"
+                                                                    alt="Room" className="w-full h-[100%] object-cover "
+                                                                />
+                                                            </div>
+                                                            <div className="p-10">
+                                                                <div className="bg-white/80 rounded-xl shadow p-6 mb-4">
+                                                                    <p className="mb-2"><strong>Room ID:</strong> <span className="text-gray-700">{selectedRoom.id}</span></p>
+                                                                    <p className="mb-2"><strong>Room Name:</strong> <span className="text-blue-700">{selectedRoom.name}</span></p>
+                                                                    <p className="mb-2"><strong>Room Description:</strong> <span className="text-gray-600">{selectedRoom.description || 'No description'}</span></p>
+                                                                    <p className="mb-2"><strong>Save Messages:</strong> <span className="text-green-700">{selectedRoom.save_messages ? 'Yes' : 'No'}</span></p>
 
-                                                            <img
-                                                                src="https://t4.ftcdn.net/jpg/09/83/98/09/360_F_983980918_Put4YfWMOydwJ7hJtjEjpUly9SIlLQ1M.jpg"
-                                                                alt="Room"
-                                                                style={{ width: 120, height: 120, borderRadius: '10px', objectFit: 'cover' }}
-                                                            />
-
-                                                            <p><strong>Room ID:</strong> {selectedRoom.id}</p>
-                                                            <p><strong>Room Name:</strong> {selectedRoom.name}</p>
-                                                            <p><strong>Room Description:</strong> {selectedRoom.description || 'No description'}</p>
-                                                            <p><strong>Save Messages:</strong> {selectedRoom.save_messages ? 'Yes' : 'No'}</p>
-                                                            <p><strong>Status:</strong> {selectedRoom.roomactive ? 'Active' : 'Inactive'}</p>
-                                                            <p><strong>Connected Users:</strong> {selectedRoom.client_count}</p>
-
-                                                            <div style={{ marginTop: '15px' }}>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={handleEditRoom}
-                                                                    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' }}
-                                                                >
-                                                                    Edit Room
-                                                                </button>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => handleRunRoom(selectedRoom.id)}
-                                                                    style={{ backgroundColor: 'green', color: 'white', marginRight: '10px' }}
-                                                                >
-                                                                    Run Server
-                                                                </button>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => handleDeleteRoom(selectedRoom.id)}
-                                                                    style={{ backgroundColor: 'red', color: 'white' }}
-                                                                >
-                                                                    Delete Room
-                                                                </button>
+                                                                    <p className="mb-2"><strong>Status: </strong>
+                                                                        <span className={selectedRoom.roomactive ? "text-green-700" : "text-red-700"}>{selectedRoom.roomactive ? 'Active' : 'Inactive'} </span>
+                                                                        <div className="inline-grid *:[grid-area:1/1]">
+                                                                            {selectedRoom.roomactive ? (
+                                                                                <>
+                                                                                    <div className="status status-success animate-ping"></div>
+                                                                                    <div className="status status-success"></div>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <div className="status status-error animate-ping"></div>
+                                                                                    <div className="status status-error"></div>
+                                                                                </>
+                                                                            )}
+                                                                        </div>
+                                                                    </p>
+                                                                    <p><strong>Connected Users:</strong> <span className="text-purple-700">{selectedRoom.client_count}</span></p>
+                                                                </div>
+                                                                <div>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={handleEditRoom}
+                                                                        className="btn btn-soft btn-info self-end mr-[10px]"
+                                                                    >
+                                                                        Edit Room
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleRunRoom(selectedRoom.id)}
+                                                                        className="btn btn-soft btn-success self-end mr-[10px]"
+                                                                    >
+                                                                        Run Room
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleDeleteRoom(selectedRoom.id)}
+                                                                        className="btn btn-soft btn-error self-end"
+                                                                    >
+                                                                        Delete Room
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     ) : (
@@ -328,7 +360,9 @@ const Userdash = () => {
                                         }
                                     </div >
 
-                                    <button type="button" onClick={closeRoomDetails}>Close</button>
+                                    <button type="button" onClick={closeRoomDetails}
+                                        className="btn btn-soft btn-default mt-auto self-start m-[40px]"
+                                    >Close</button>
 
                                 </div >
                             ) : (
