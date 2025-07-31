@@ -63,6 +63,9 @@ const WSChat = () => {
     }, [messages]);
 
     if (loading) return <div>Loading...</div>;
+    const uniqueOnlineUsers = onlineUsers.filter(
+        (user, idx, arr) => arr.findIndex(u => u.id === user.id) === idx
+    );
 
     return (
         <div className="bg-white-gray-gradient flex items-center justify-center min-h-screen">
@@ -85,8 +88,8 @@ const WSChat = () => {
                         <div className="divider w-[50%] mx-auto"></div>
                         {/* Online Users List at the very top after divider */}
                         <ul className="list bg-base-100 rounded-box shadow-md mb-2 mx-auto w-[80%] overflow-y-auto" style={{ maxHeight: '35vh' }}>
-                            <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Online Users ({onlineUsers.length})</li>
-                            {onlineUsers.map((u, i) => (
+                            <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Online Users ({uniqueOnlineUsers.length})</li>
+                            {uniqueOnlineUsers.map((u, i) => (
                                 <li key={u.id || i} className="list-row flex items-center gap-3">
 
                                     <div>

@@ -4,7 +4,9 @@ import { Createchat, Listrooms, Deleteroom, Updateroom, Runroom } from '../utils
 import { useState } from "react";
 import { useEffect } from "react";
 
+
 const Userdash = () => {
+
     const { user, loading } = useUser();
     const navigate = useNavigate();
     const [hubname, sethubname] = useState("");
@@ -200,9 +202,9 @@ const Userdash = () => {
             <div className="bg-white-gray-gradient flex items-center justify-center">
                 <div className="rounded-2xl shadow-lg p-8 w-[80vw] h-[80vh] mx-auto my-12 bg-white ">
                     <div className="flex w-full h-full">
-                        <div className="card bg-base-300 rounded-box grid  grow place-items-center basis-[30%]">
+                        <div className="card bg-base-300 rounded-box grid shadow-lg grow place-items-center basis-[30%]">
                             <div className="flex w-full flex-col">
-                                <div className="card bg-black/20 rounded-box grid w-[80%] p-5 mt-5 mx-auto">
+                                <div className="card bg-black/20 rounded-box grid w-[80%] p-5 mt-5 mx-auto shadow-lg">
                                     <div className="flex justify-center">
                                         <img
                                             src="https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1906669723.jpg"
@@ -216,8 +218,8 @@ const Userdash = () => {
                                     <div><strong>Created:</strong> {formatdate}</div>
                                 </div>
                                 <div className="divider w-[50%] mx-auto"></div>
-                                <div className="card rounded-box gridplace-items-center p-5 bg-black/20 mt-5 w-[80%] mx-auto">
-                                    <div><strong>Create hub</strong></div><br></br>
+                                <div className="card rounded-box gridplace-items-center p-5 bg-black/20 shadow-lg mt-5 w-[80%] mx-auto">
+                                    <div><strong>Your Room(s)!</strong></div><br></br>
                                     <form onSubmit={handleCreateChat}>
                                         <input
                                             className="input w-[74%]"
@@ -261,10 +263,10 @@ const Userdash = () => {
                         <div className="divider divider-horizontal"></div>
 
                         {/* right side */}
-                        <div className="card bg-base-300 rounded-box grid grow place-items-center basis-[70%]">
+                        <div className="card bg-base-300 shadow-lg rounded-box grid grow place-items-center basis-[70%]">
                             {
                                 selectedRoom ? (
-                                    <div className="bg-black/20 rounded h-[95%] w-[95%] flex flex-col">
+                                    <div className="bg-black/20 rounded h-[95%] w-[95%] flex shadow-lg flex-col">
                                         <div >
                                             {
                                                 selectedRoom ? (
@@ -307,6 +309,13 @@ const Userdash = () => {
                                                                     <div>
                                                                         <button
                                                                             type="button"
+                                                                            className="btn btn-soft btn-secondary mr-[10px]"
+                                                                            onClick={() => navigate(`/ch/${selectedRoom.id}`)}
+                                                                        >
+                                                                            Open Room
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
                                                                             onClick={handleEditRoom}
                                                                             className="btn btn-soft btn-info self-end mr-[10px]"
                                                                         >
@@ -322,7 +331,7 @@ const Userdash = () => {
                                                                         <button
                                                                             type="button"
                                                                             onClick={() => handleDeleteRoom(selectedRoom.id)}
-                                                                            className="btn btn-soft btn-error self-end"
+                                                                            className="btn btn-soft btn-error self-end  mr-[10px]"
                                                                         >
                                                                             Delete Room
                                                                         </button>

@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './utils/usercontext';
 import Dash from './pages/userdashboard'
 import WSChat from './pages/wschat';
+import Roomlist from './pages/roomlist'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -20,6 +21,7 @@ root.render(
             <Route index element={<Home />} />
             <Route path="auth" element={<Auth />} />
             <Route path="dash" element={<Dash />} />
+            <Route path="roomlist" element={<Roomlist />} />
             <Route path="ch/:hubId" element={<WSChat />} />
           </Route>
         </Routes>
