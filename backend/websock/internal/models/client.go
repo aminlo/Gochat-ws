@@ -78,16 +78,15 @@ func (c *Client) WritePump() {
 	webcontentbytes, _ := json.Marshal(message)
 	if err := c.Conn.WriteMessage(websocket.TextMessage, webcontentbytes); err != nil {
 		log.Println("Write error:", err)
-
-		for message := range c.Send {
-			webcontentbytes, _ := json.Marshal(message)
-			log.Printf("WritePump sending: %s", string(webcontentbytes))
-			if err := c.Conn.WriteMessage(websocket.TextMessage, webcontentbytes); err != nil {
-				log.Println("Write error:", err)
-				return
-			}
-		}
-		// Channel closed, send close message
-		c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
 	}
+	for message := range c.Send {
+		webcontentbytes, _ := json.Marshal(message)
+		log.Printf("WritePump sending: %s", string(webcontentbytes))
+		if err := c.Conn.WriteMessage(websocket.TextMessage, webcontentbytes); err != nil {
+			log.Println("Write error:", err)
+			return
+		}
+	}
+	// Channel closed, send close message
+	c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
 }
