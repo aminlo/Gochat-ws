@@ -5,7 +5,7 @@ import (
 )
 
 type Message struct {
-	Type      string                   `json:"type"`
+	Type      MessageType              `json:"type"`
 	Message   string                   `json:"message"`
 	User      map[string]interface{}   `json:"user"`
 	Users     []map[string]interface{} `json:"users"`
@@ -16,6 +16,7 @@ type Message struct {
 type MessageType string
 
 const (
+	MessageWhoami       MessageType = "whoami"
 	MessageTypeText     MessageType = "text"
 	MessageTypeJoin     MessageType = "join"
 	MessageTypeLeave    MessageType = "leave"

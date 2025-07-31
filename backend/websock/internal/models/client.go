@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -37,8 +38,8 @@ func (c *Client) ReadPump() {
 
 		log.Printf("message came: %s", string(webcontentbytes))
 		var incomingMsg struct {
-			Message string `json:"message"`
-			Type    string `json:"type"`
+			Message string      `json:"message"`
+			Type    MessageType `json:"type"`
 		}
 
 		if err := json.Unmarshal(webcontentbytes, &incomingMsg); err != nil {
@@ -65,15 +66,28 @@ func (c *Client) ReadPump() {
 }
 
 func (c *Client) WritePump() {
-
-	for message := range c.Send {
-		webcontentbytes, _ := json.Marshal(message)
-		log.Printf("WritePump sending: %s", string(webcontentbytes))
-		if err := c.Conn.WriteMessage(websocket.TextMessage, webcontentbytes); err != nil {
-			log.Println("Write error:", err)
-			return
-		}
+	message := &Message{
+		Type:    MessageWhoami,
+		Message: fmt.Sprintf("UserID: %s, Username: %s, Conn: %v, Hub: %v, Send: %v", c.UserID, c.Username, c.Conn, c.Hub, c.Send),
+		User: map[string]interface{}{
+			"id":       c.UserID,
+			"username": c.Username,
+		},
+		Timestamp: time.Now(),
 	}
-	// Channel closed, send close message
-	c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+	webcontentbytes, _ := json.Marshal(message)
+	if err := c.Conn.WriteMessage(websocket.TextMessage, webcontentbytes); err != nil {
+		log.Println("Write error:", err)
+
+		for message := range c.Send {
+			webcontentbytes, _ := json.Marshal(message)
+			log.Printf("WritePump sending: %s", string(webcontentbytes))
+			if err := c.Conn.WriteMessage(websocket.TextMessage, webcontentbytes); err != nil {
+				log.Println("Write error:", err)
+				return
+			}
+		}
+		// Channel closed, send close message
+		c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+	}
 }

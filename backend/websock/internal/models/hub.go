@@ -39,7 +39,7 @@ func (h *Hub) Run() {
 			// Send join message to all clients
 			joinMsg := &Message{
 				MessageID: uuid.New().String(),
-				Type:      string(MessageTypeJoin),
+				Type:      MessageTypeJoin,
 				Message:   client.Username + " joined the room",
 				User: map[string]any{
 					"id":       client.UserID,
@@ -64,7 +64,7 @@ func (h *Hub) Run() {
 			// Send leave message to remaining clients
 			leaveMsg := &Message{
 				MessageID: uuid.New().String(),
-				Type:      string(MessageTypeLeave),
+				Type:      MessageTypeLeave,
 				Message:   client.Username + " left the room",
 				User: map[string]interface{}{
 					"id":       client.UserID,
