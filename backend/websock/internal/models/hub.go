@@ -36,6 +36,7 @@ func (h *Hub) Run() {
 				client.Username, h.Hubname, len(h.Clients))
 
 			h.sendUserListToNewClient(client) // so users kno what users are in room
+			h.broadcastUserList()
 			// Send join message to all clients
 			joinMsg := &Message{
 				MessageID: uuid.New().String(),
@@ -135,4 +136,25 @@ func (h *Hub) sendUserListToNewClient(newClient *Client) {
 	default:
 		log.Println("Failed to send user list to new client")
 	}
+}
+
+func (h *Hub) broadcastUserList() {
+	h.Mutex.RLock()
+	var users []map[string]interface{}
+	for client := range h.Clients {
+		users = append(users, map[string]interface{}{
+			"id":       client.UserID,
+			"username": client.Username,
+		})
+	}
+	h.Mutex.RUnlock()
+
+	userListMsg := &Message{
+		MessageID: uuid.New().String(),
+		Type:      MessageTypeUserList,
+		Users:     users,
+		Timestamp: time.Now(),
+	}
+
+	h.broadcastMessage(userListMsg)
 }
