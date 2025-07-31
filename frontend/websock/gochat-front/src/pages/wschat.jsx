@@ -11,6 +11,7 @@ const WSChat = () => {
     const [onlineUsers, setOnlineUsers] = useState([]);
     const wsRef = useRef(null);
     const messagesEndRef = useRef(null);
+    const [whoamiUser, setWhoamiUser] = useState(null);
 
     useEffect(() => {
         if (!hubId || loading) return;
@@ -27,6 +28,7 @@ const WSChat = () => {
             try {
                 const data = JSON.parse(event.data);
                 if (data.type === 'message') {
+                    console.log(data)
                     setMessages((prev) => [...prev, data]);
                 } else if (data.type === 'user_list') {
                     console.log(data)
@@ -36,6 +38,8 @@ const WSChat = () => {
                     setOnlineUsers((prev) => [...prev, data.user]);
                 } else if (data.type === 'user_left') {
                     setOnlineUsers((prev) => prev.filter(u => u.id !== data.user.id));
+                } else if (data.type === 'whoami') {
+                    setWhoamiUser(data.user);
                 }
             } catch (e) {
                 console.log(e);
@@ -74,7 +78,7 @@ const WSChat = () => {
                                     style={{ width: 80, height: 80, borderRadius: '50%' }}
                                 />
                             </div>
-                            <div><strong>Hi</strong> {user?.username || 'Anonymous'}</div>
+                            <div><strong>Hi</strong> {user?.username || whoamiUser?.username || 'Anonymous'}</div>
                             <div><strong>Status:</strong> <span className={connected ? "text-green-700" : "text-red-700"}>{connected ? 'Connected' : 'Disconnected'}</span></div>
                             <div><strong>Room:</strong> {hubId}</div>
                         </div>
@@ -110,7 +114,7 @@ const WSChat = () => {
                                         <div className="text-gray-500">No messages yet.</div>
                                     ) : (
                                         messages.map((msg, i) => {
-                                            const isOwn = msg.user?.id === user?.id;
+                                            const isOwn = msg.user?.id === (user?.id || whoamiUser?.id);
                                             return (
                                                 <div key={i} className={`chat ${isOwn ? 'chat-end' : 'chat-start'}`}>
                                                     <div className="chat-image avatar">
