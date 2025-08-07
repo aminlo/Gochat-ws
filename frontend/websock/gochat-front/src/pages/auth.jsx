@@ -12,77 +12,93 @@ const AuthPage = () => {
     const [isSignup, setIsSignup] = useState(true);
     const { user, setUser } = useUser();
     const navigate = useNavigate();
+    const [error, setError] = useState('');
     useEffect(() => {
         Pingapi();
     }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setError('');
         try {
             if (isSignup) {
-
                 await Signup(email, username, password);
-                console.log('Signup successful!');
+                navigate('/dash');
             } else {
-
                 const response = await login(email, password);
-                console.log('Login successful!', response);
                 setUser(response)
                 navigate('/dash');
             }
-        } catch (error) {
-            console.error(`${isSignup ? 'Signup' : 'Login'} failed:`, error.message);
+        } catch (err) {
+            setError(`${isSignup ? 'Signup' : 'Login'} failed: ${err.message}`);
         }
     }
 
     return (
-        <div>
-            <button
-                type="button"
-                onClick={() => setIsSignup(true)}
-
-            >
-                Signup
-            </button>
-            <button
-                type="button"
-                onClick={() => setIsSignup(false)}
-
-            >
-                Login
-            </button>
-            <button type="button">Dev Review!</button>
-
-            {/* buttons above */}
-            <div>{isSignup ? 'Signup' : 'Login'}</div>
-            <form onSubmit={handleSubmit}>
-                {isSignup && (<input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={e => setUsername(e.target.value)}
-                    required
-                />)}
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">
-                    {isSignup ? 'Sign Up' : 'Log In'}
+        <div className="bg-white-gray-gradient flex items-center justify-center min-h-screen">
+            <div className="card bg-white rounded-2xl shadow-lg p-8 w-[400px] mx-auto">
+                {/* <div className="card bg-white rounded-2xl shadow-lg p-8 w-[400px] mx-auto"> */}
+                <div className="w-full mb-6">
+                    <div className="tabs tabs-lift w-full flex justify-center">
+                        <button
+                            type="button"
+                            className={`tab flex-1 ${!isSignup ? 'tab-active' : ''}`}
+                            onClick={() => setIsSignup(false)}
+                        >
+                            Login
+                        </button>
+                        <button
+                            type="button"
+                            className={`tab flex-1 ${isSignup ? 'tab-active' : ''}`}
+                            onClick={() => setIsSignup(true)}
+                        >
+                            Signup
+                        </button>
+                    </div>
+                    <div className="text-3xl font-bold mt-6 text-center">{isSignup ? 'Sign Up' : 'Log In'}</div>
+                </div>
+                {error && (
+                    <div className="alert alert-error mb-4">
+                        <span>{error}</span>
+                    </div>
+                )}
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                    <input
+                        type="text"
+                        className={`input input-bordered w-full transition-all duration-200 ${isSignup ? '' : 'opacity-0 pointer-events-none h-0 p-0 m-0'}`} // pointer envents == no action, then ensure props are all 0 and collpased
+                        placeholder="Username"
+                        value={username}
+                        onChange={e => setUsername(e.target.value)}
+                        required={isSignup}
+                        tabIndex={isSignup ? 0 : -1} // to ensure when tabbing, username field is skipped/shown
+                    />
+                    <input
+                        type="email"
+                        className="input input-bordered w-full"
+                        placeholder="Email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        required
+                    />
+                    <input
+                        type="password"
+                        className="input input-bordered w-full"
+                        placeholder="Password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        required
+                    />
+                    <button type="submit" className="btn btn-success w-full mt-2">
+                        {isSignup ? 'Sign Up' : 'Log In'}
+                    </button>
+                </form>
+                <div className="divider my-6">or</div>
+                <button type="button" className="btn btn-soft btn-info w-full" disabled>
+                    Dev Review!
                 </button>
-            </form>
+            </div>
         </div>
     );
 }
-export default AuthPage
+
+export default AuthPage;
