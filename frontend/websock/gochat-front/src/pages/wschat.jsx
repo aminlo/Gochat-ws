@@ -38,6 +38,7 @@ const WSChat = () => {
                     setOnlineUsers((prev) => [...prev, data.user]);
                 } else if (data.type === 'user_left') {
                     setOnlineUsers((prev) => prev.filter(u => u.id !== data.user.id));
+                    console.log(data)
                 } else if (data.type === 'whoami') {
                     setWhoamiUser(data.user);
                 }

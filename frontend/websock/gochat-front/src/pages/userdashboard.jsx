@@ -201,10 +201,10 @@ const Userdash = () => {
             )}
             <div className="bg-white-gray-gradient flex items-center justify-center">
                 <div className="rounded-2xl shadow-lg p-8 w-[80vw] h-[80vh] mx-auto my-12 bg-white ">
-                    <div className="flex w-full h-full">
+                    <div className="flex flex-col md:flex-row w-full h-full">
                         <div className="card bg-base-300 rounded-box grid shadow-lg grow place-items-center basis-[30%]">
                             <div className="flex w-full flex-col">
-                                <div className="card bg-black/20 rounded-box grid w-[80%] p-5 mt-5 mx-auto shadow-lg">
+                                <div className="card bg-white rounded-box grid w-[80%] p-5 mt-5 mx-auto shadow-lg">
                                     <div className="flex justify-center">
                                         <img
                                             src="https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1906669723.jpg"
@@ -218,7 +218,20 @@ const Userdash = () => {
                                     <div><strong>Created:</strong> {formatdate}</div>
                                 </div>
                                 <div className="divider w-[50%] mx-auto"></div>
-                                <div className="card rounded-box gridplace-items-center p-5 bg-black/20 shadow-lg mt-5 w-[80%] mx-auto">
+                                <div className="card rounded-box gridplace-items-center p-3 bg-white shadow-lg  w-[80%] mx-auto min-w-[250px]">
+                                    <div className="flex flex-row items-center justify-between">
+                                        <div>Search for rooms</div>
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary ml-4"
+                                            onClick={() => navigate('/roomlist')}
+                                        >
+                                            Go to Room List
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="divider w-[50%] mx-auto"></div>
+                                <div className="card rounded-box gridplace-items-center p-5 bg-white shadow-lg  w-[80%] mx-auto">
                                     <div><strong>Your Room(s)!</strong></div><br></br>
                                     <form onSubmit={handleCreateChat}>
                                         <input
@@ -235,7 +248,7 @@ const Userdash = () => {
                                     <div className="overflow-y-auto w-full " style={{ maxHeight: '35vh', minHeight: '35vh' }}>
                                         {roomlist?.length > 0 && roomlist.map((room) => (
                                             <div key={room.id}
-                                                className="bg-white rounded shadow p-3 mb-3 flex flex-col pb-4">
+                                                className="bg-white rounded shadow-xl p-3 mb-3 flex flex-col pb-4">
                                                 <div className="inline-grid *:[grid-area:1/1]">
                                                     {room.roomactive ? (
                                                         <>
@@ -266,7 +279,7 @@ const Userdash = () => {
                         <div className="card bg-base-300 shadow-lg rounded-box grid grow place-items-center basis-[70%]">
                             {
                                 selectedRoom ? (
-                                    <div className="bg-black/20 rounded h-[95%] w-[95%] flex shadow-lg flex-col">
+                                    <div className="bg-white rounded h-[95%] w-[95%] flex shadow-lg flex-col">
                                         <div >
                                             {
                                                 selectedRoom ? (
