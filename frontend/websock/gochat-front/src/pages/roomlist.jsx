@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from '../utils/usercontext';
 
 const RoomDirectory = () => {
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const { user, setUser } = useUser();
     const [search, setSearch] = useState('');
     const navigate = useNavigate();
 
@@ -14,9 +15,17 @@ const RoomDirectory = () => {
             const res = await fetch("http://localhost:3000/roomlist");
             if (!res.ok) throw new Error("Failed to fetch rooms");
             const data = await res.json();
-            setRooms(data);
+            if (data.length === 0) {
+                setRooms([]);
+                return;
+            }
+            const filteredRooms = data.filter(room =>
+                room.name.toLowerCase().includes(search.toLowerCase())
+            );
+            setRooms(filteredRooms);
         } catch (err) {
             console.log(err)
+            setRooms([])
         } finally {
             setLoading(false);
         }
@@ -31,9 +40,6 @@ const RoomDirectory = () => {
     };
 
     // Filter rooms by search term
-    const filteredRooms = rooms.filter(room =>
-        room.name.toLowerCase().includes(search.toLowerCase())
-    );
 
     return (
         <div className="bg-white-gray-gradient flex items-center justify-center min-h-screen">
@@ -41,8 +47,16 @@ const RoomDirectory = () => {
                 <div className="flex flex-col items-center h-full">
                     <h2 className="text-2xl font-bold mb-6">Public Rooms Directory</h2>
                     <div className="flex gap-4 mb-4 w-full max-w-xl">
+                        {user &&
+                            <button
+                                className="btn btn-soft btn-accent mb-4"
+                                onClick={() => navigate('/dash')}
+                            >
+                                Go to Your Dashboard
+                            </button>
+                        }
                         <input
-                            className="input w-full"
+                            className="input w-full text-center"
                             type="text"
                             placeholder="Search rooms..."
                             value={search}
@@ -57,11 +71,12 @@ const RoomDirectory = () => {
                         </button>
                     </div>
                     {loading && <div>Loading rooms...</div>}
+
                     <div className="overflow-y-auto w-full" style={{ maxHeight: '60vh', minHeight: '40vh' }}>
-                        {filteredRooms.length === 0 && !loading ? (
+                        {rooms.length === 0 && !loading ? (
                             <div className="text-gray-500">No rooms available.</div>
                         ) : (
-                            filteredRooms.map(room => (
+                            rooms.map(room => (
                                 <div key={room.id}
                                     className="bg-white rounded shadow p-3 mb-3 flex flex-col pb-4 w-[90%] mx-auto">
                                     <div className="flex items-center justify-between">

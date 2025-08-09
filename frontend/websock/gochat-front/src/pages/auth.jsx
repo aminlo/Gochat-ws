@@ -35,8 +35,8 @@ const AuthPage = () => {
     }
 
     return (
-        <div className="bg-white-gray-gradient flex items-center justify-center min-h-screen">
-            <div className="card bg-white rounded-2xl shadow-lg p-8 w-[400px] mx-auto">
+        <div className="bg-white-gray-gradient flex items-center justify-center min-h-screen ">
+            <div className="card bg-white rounded-2xl shadow-lg p-8 w-[400px] mx-12 my-12 min-w-[350px]">
                 {/* <div className="card bg-white rounded-2xl shadow-lg p-8 w-[400px] mx-auto"> */}
                 <div className="w-full mb-6">
                     <div className="tabs tabs-lift w-full flex justify-center">

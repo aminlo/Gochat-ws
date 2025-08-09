@@ -200,11 +200,11 @@ const Userdash = () => {
                 </div>
             )}
             <div className="bg-white-gray-gradient flex items-center justify-center">
-                <div className="rounded-2xl shadow-lg p-8 w-[80vw] h-[80vh] mx-auto my-12 bg-white ">
-                    <div className="flex flex-col md:flex-row w-full h-full">
-                        <div className="card bg-base-300 rounded-box grid shadow-lg grow place-items-center basis-[30%]">
+                <div className="rounded-2xl shadow-lg p-8 w-[80vw]  mx-auto my-12 bg-white text-sm xl:text-base min-w-[350px]">
+                    <div className="flex flex-col lg:flex-row w-full h-full ">
+                        <div className="card bg-base-300 rounded-box grid shadow-lg grow place-items-center min-w-[300px]">
                             <div className="flex w-full flex-col">
-                                <div className="card bg-white rounded-box grid w-[80%] p-5 mt-5 mx-auto shadow-lg">
+                                <div className="card bg-white rounded-box grid w-[80%] p-5 mt-5 mx-auto shadow-lg ">
                                     <div className="flex justify-center">
                                         <img
                                             src="https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1906669723.jpg"
@@ -231,21 +231,21 @@ const Userdash = () => {
                                     </div>
                                 </div>
                                 <div className="divider w-[50%] mx-auto"></div>
-                                <div className="card rounded-box gridplace-items-center p-5 bg-white shadow-lg  w-[80%] mx-auto">
+                                <div className="card rounded-box gridplace-items-center p-5 bg-white shadow-lg  w-[80%] mx-auto mb-5">
                                     <div><strong>Your Room(s)!</strong></div><br></br>
-                                    <form onSubmit={handleCreateChat}>
+                                    <form onSubmit={handleCreateChat} className="flex items-center ">
                                         <input
-                                            className="input w-[74%]"
+                                            className="input flex-grow"
                                             type="text"
                                             placeholder="chat name!"
                                             value={hubname}
                                             onChange={e => sethubname(e.target.value)}
                                             required
                                         />
-                                        <button type="submit" className="btn btn-neutral join-item">Create Chat</button><br></br>
-                                    </form >
+                                        <button type="submit" className="btn btn-neutral">Create Chat</button>
+                                    </form>
                                     <br></br>
-                                    <div className="overflow-y-auto w-full " style={{ maxHeight: '35vh', minHeight: '35vh' }}>
+                                    <div className="overflow-y-auto w-full max-h-[25vh]">
                                         {roomlist?.length > 0 && roomlist.map((room) => (
                                             <div key={room.id}
                                                 className="bg-white rounded shadow-xl p-3 mb-3 flex flex-col pb-4">
