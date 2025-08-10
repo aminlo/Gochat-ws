@@ -1,4 +1,4 @@
-name: ci-back
+name: ci-back1
 
 on:
   pull_request:
@@ -43,7 +43,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23.0"
+          go-version: "1.24.0"
 
       - name: Check formatting
         run: test -z $(go fmt ./...)
