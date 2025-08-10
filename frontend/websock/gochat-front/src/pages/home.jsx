@@ -1,71 +1,161 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useUser } from '../utils/usercontext';
 
 
 const Home = () => {
     const { user } = useUser();
+    const [rooms, setRooms] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const fetchRooms = async () => {
+            try {
+                setLoading(true);
+                const res = await fetch("http://localhost:3000/roomlist");
+                if (!res.ok) throw new Error("Failed to load rooms");
+                const data = await res.json();
+                setRooms(Array.isArray(data) ? data.slice(0, 3) : []);
+            } catch (e) {
+                setError("Couldn't load rooms");
+                setRooms([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchRooms();
+    }, []);
+
     return (
-        <div className="bg-white-gray-gradient flex flex-col items-center">
-            <nav className="w-full flex justify-center">
-                <div className="">Gochat</div>
-            </nav>
-
-            <div className="relative w-full flex justify-center">
-                <img
-                    src="/images/catlaptop.jpg"
-                    alt="Gochat Logo"
-                    className="h-[50vh] w-full object-cover"
-                />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl font-bold text-white drop-shadow-lg flex flex-col items-center">
-                    The bla bla chat application!
-                    <br /> <br />
-                    {user ? (
-                        <button className="btn btn-success btn-xl rounded-full mt-4 w-[10vw]">
-                            <Link to="/dash">Hi {user.username}! <br></br>Go to dash</Link>
-                        </button>
-                    ) : (
-                        <button className="btn btn-success btn-xl rounded-full mt-4">
-                            <Link to="/auth">Join the action now! Signup/login here</Link>
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            <div className="flex flex-col items-center rounded-2xl shadow-lg bg-white p-6 w-[70vw] mx-auto -translate-y-1/9 mt-8">
-
-                <div className="">
-                    Welcome to Gochat! This is a placeholder for a 500-word introduction or description of the application.
-                    <br /><br />
-                    Gochat is a modern web-based chat platform designed to connect users in real-time. Whether you are here to catch up with friends, collaborate with colleagues, or meet new people, Gochat provides a seamless and secure environment for all your communication needs.
-                    <br /><br />
-                    Our platform leverages the latest web technologies to ensure fast, reliable, and interactive messaging. With a user-friendly interface, you can easily navigate through different chat rooms, manage your contacts, and customize your experience. Gochat supports both private and group conversations, allowing you to communicate the way you prefer.
-                    <br /><br />
-                    Security and privacy are at the core of Gochat. We use end-to-end encryption to protect your messages, ensuring that only you and your intended recipients can read them. Your personal information is never shared with third parties, and you have full control over your account settings.
-                    <br /><br />
-                    Getting started is simple. You can sign up as a regular user to join public chat rooms or create your own private spaces. For developers, we offer a special signup option that unlocks additional features, such as API access and integration tools. This makes Gochat an ideal choice for both casual users and tech enthusiasts.
-                    <br /><br />
-                    Our team is constantly working to improve the platform by adding new features and enhancing performance. We value your feedback and encourage you to share your thoughts with us. If you encounter any issues or have suggestions for improvement, please reach out through our support channels.
-
-
-                </div>
-                <div>
-                    <h2>Technologies & Tools Used</h2>
-                    <ul>
-                        <li>React – For building the interactive frontend user interface.</li>
-                        <li>Vite – For fast frontend development and hot module reloading.</li>
-                        <li>Tailwind CSS – For utility-first, responsive, and modern styling.</li>
-                        <li>React Router – For client-side routing and navigation.</li>
-                        <li>WebSockets – For real-time chat communication between users.</li>
-                        <li>Go (Golang) Backend – For handling authentication, chat logic, and WebSocket connections.</li>
-                        <li>PostgreSQL – For persistent data storage (users, rooms, messages).</li>
-                        <li>Docker – For containerized deployment and development environments.</li>
-                        <li>ESLint & Prettier – For code quality and formatting.</li>
-                    </ul>
-                    <div>
-                        This stack ensures a fast, secure, and scalable chat experience for all users.
+        <div className="bg-white-gray-gradient min-h-screen flex flex-col">
+            {/* Top Nav */}
+            <header className="w-full sticky top-0 z-10 bg-white/70 backdrop-blur border-b border-gray-200">
+                <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+                    <Link to="/" className="font-extrabold tracking-tight text-xl">
+                        Gochat
+                    </Link>
+                    <div className="flex items-center gap-2">
+                        <Link className="btn btn-soft btn-secondary" to="/roomlist">Browse Rooms</Link>
+                        {user ? (
+                            <Link className="btn btn-success" to="/dash">Dashboard</Link>
+                        ) : (
+                            <Link className="btn btn-primary" to="/auth">Login / Signup</Link>
+                        )}
                     </div>
                 </div>
-            </div>
+            </header>
+
+            <section className="relative w-full">
+                <img
+                    src="/images/catlaptop.jpg"
+                    alt="Hero background"
+                    className="h-[55vh] w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/30" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center text-white px-4">
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold drop-shadow">
+                            Chat in real-time. Simple. Fast. Fun.
+                        </h1>
+                        <p className="mt-3 text-sm sm:text-base opacity-95 max-w-2xl mx-auto">
+                            Create your own room, invite friends, or jump into public rooms. No complications, just conversations.
+                        </p>
+                        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+                            {user ? (
+                                <Link className="btn btn-success" to="/dash">Go to your Dashboard</Link>
+                            ) : (
+                                <Link className="btn btn-success" to="/auth">Get started with just a click!</Link>
+                            )}
+                            <Link className="btn btn-outline btn-primary" to="/roomlist">Explore Public Rooms</Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Features */}
+            <section className="max-w-6xl mx-auto px-4 -mt-8 sm:-mt-12">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="card bg-white rounded-2xl shadow-lg p-6">
+                        <div className="flex items-center gap-3 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4zM4 11h16v2H4zM4 16h10v2H4z" /></svg>
+                            <h3 className="font-semibold">Create and manage rooms</h3>
+                        </div>
+                        <p className="text-sm opacity-80">Spin up rooms, edit details, toggle saving, and monitor activity from your dashboard.</p>
+                    </div>
+                    <div className="card bg-white rounded-2xl shadow-lg p-6">
+                        <div className="flex items-center gap-3 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-success" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4Zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z" /></svg>
+                            <h3 className="font-semibold">Join instantly</h3>
+                        </div>
+                        <p className="text-sm opacity-80">Public rooms are one click away. Join authenticated with your unique username or join as an anon user!</p>
+                    </div>
+                    <div className="card bg-white rounded-2xl shadow-lg p-6">
+                        <div className="flex items-center gap-3 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-info" viewBox="0 0 24 24" fill="currentColor"><path d="M21 6h-8l-2-2H3c-1.1 0-2 .9-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2Z" /></svg>
+                            <h3 className="font-semibold">Clean, responsive UI</h3>
+                        </div>
+                        <p className="text-sm opacity-80">Built with Tailwind + DaisyUI to look great on mobile and desktop.</p>
+                    </div>
+                </div>
+            </section>
+
+            {/* Live rooms preview */}
+            <section className="max-w-6xl mx-auto px-4 mt-8 mb-12 w-full">
+                <div className="rounded-2xl shadow-lg p-6 bg-white">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold">Trending public rooms</h2>
+                        <Link className="btn btn-soft btn-secondary" to="/roomlist">View all</Link>
+                    </div>
+                    {loading ? (
+                        <div>Loading rooms…</div>
+                    ) : error ? (
+                        <div className="text-error">{error}</div>
+                    ) : rooms.length === 0 ? (
+                        <div className="opacity-70">No rooms available right now.</div>
+                    ) : (
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {rooms.map(room => (
+                                <div key={room.id} className="bg-white rounded shadow p-4 flex flex-col gap-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="font-semibold truncate max-w-[60%]" title={room.name}>{room.name}</div>
+                                        <div className="inline-grid *:[grid-area:1/1]">
+                                            {room.roomactive ? (
+                                                <>
+                                                    <div className="status status-success animate-ping" />
+                                                    <div className="status status-success" />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="status status-error animate-ping" />
+                                                    <div className="status status-error" />
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="text-xs opacity-70">Room ID: {room.id}</div>
+                                    <div className="text-xs">
+                                        Status: {room.roomactive ? <span className="text-green-700">Online</span> : <span className="text-red-500">Offline</span>}
+                                    </div>
+                                    <div className="text-xs">Users: {room.client_count}</div>
+                                    <Link
+                                        className="btn btn-soft btn-primary mt-2"
+                                        to={`/ch/${room.id}`}
+                                    >
+                                        {room.roomactive ? 'Join' : 'Open'}
+                                    </Link>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="mt-auto py-6 text-center opacity-70 text-sm">
+                <div>WebSocket chat demo</div>
+                <div>Github Repo link: https://github.com/aminlo/Gochat-ws</div>
+            </footer>
         </div>
     )
 };

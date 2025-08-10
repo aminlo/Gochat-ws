@@ -46,24 +46,24 @@ const RoomDirectory = () => {
             <div className="rounded-2xl shadow-lg p-8 w-[80vw] h-[80vh] mx-auto my-12 bg-white">
                 <div className="flex flex-col items-center h-full">
                     <h2 className="text-2xl font-bold mb-6">Public Rooms Directory</h2>
-                    <div className="flex gap-4 mb-4 w-full max-w-xl">
+                    <div className="flex lg:flex-row flex-col gap-4 mb-4 w-full max-w-2xl">
                         {user &&
                             <button
-                                className="btn btn-soft btn-accent mb-4"
+                                className="btn btn-soft btn-info min-w-40 lg:max-w-40"
                                 onClick={() => navigate('/dash')}
                             >
                                 Go to Your Dashboard
                             </button>
                         }
                         <input
-                            className="input w-full text-center"
+                            className="input w-full text-center mx-auto"
                             type="text"
                             placeholder="Search rooms..."
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                         />
                         <button
-                            className="btn btn-soft btn-secondary"
+                            className="btn btn-soft btn-secondary min-w-40"
                             onClick={fetchRooms}
                             disabled={loading}
                         >
