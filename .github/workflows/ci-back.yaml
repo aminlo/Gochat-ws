@@ -3,8 +3,10 @@ name: ci-back1
 on:
   pull_request:
     branches: [main]
+    paths:
+      - ./backend/**
   push:
-    branches: [backend]
+    branches: [websocket-server]
 
 jobs:
   tests:
