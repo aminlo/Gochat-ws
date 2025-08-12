@@ -1,0 +1,49 @@
+name: cd-front
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - frontend/**
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '21.7.0'
+
+      - name: Install dependencies
+        run: |
+          cd frontend/websock/gochat-front
+          npm install
+
+      - name: Build app
+        run: |
+          cd frontend/websock/gochat-front
+          npm run vite-build
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Use gcloud CLI'
+        run: gcloud info
+
+      - name: Set GCP Project
+        run: gcloud config set project gochat-proj
+
+
+      - name: Upload build to GCS bucket
+        run: |
+          cd frontend/websock/gochat-front
+          gsutil -m rsync -r ./dist gs://gochat-front-react
