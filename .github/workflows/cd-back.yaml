@@ -47,10 +47,10 @@ jobs:
               gcloud builds submit --tag $IMAGE_NAME:latest .
               gcloud container images add-tag $IMAGE_NAME:latest $IMAGE_NAME:v1
 
-          - name: Download Goose
-            run: go install github.com/pressly/goose/v3/cmd/goose@latest
+          # - name: Download Goose
+          #   run: go install github.com/pressly/goose/v3/cmd/goose@latest
 
           - name: Deploy to Cloud Run
             run: |
               IMAGE_NAME=us-central1-docker.pkg.dev/gochat-proj/gochat-ar-repo/gochat
-              gcloud run deploy notely --image $IMAGE_NAME:latest --region us-central1 --allow-unauthenticated --max-instances=1
+              gcloud run deploy gochat --image $IMAGE_NAME:latest --region us-central1 --allow-unauthenticated --max-instances=1
