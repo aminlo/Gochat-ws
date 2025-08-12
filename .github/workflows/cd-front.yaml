@@ -28,22 +28,12 @@ jobs:
           cd frontend/websock/gochat-front
           npm run vite-build
 
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
+
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
-
-      - name: 'Use gcloud CLI'
-        run: gcloud info
-
-      - name: Set GCP Project
-        run: gcloud config set project gochat-proj
-
-
-      - name: Upload build to GCS bucket
-        run: |
-          cd frontend/websock/gochat-front
-          gsutil -m rsync -r ./dist gs://gochat-front-react
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          channelId: live
+          projectId: gochat-react

@@ -1,0 +1,128 @@
+[debug] [2025-08-12T17:58:33.037Z] ----------------------------------------------------------------------
+[debug] [2025-08-12T17:58:33.038Z] Command:       /home/mn/.nvm/versions/node/v21.7.0/bin/node /home/mn/.nvm/versions/node/v21.7.0/bin/firebase init hosting
+[debug] [2025-08-12T17:58:33.039Z] CLI Version:   14.12.0
+[debug] [2025-08-12T17:58:33.039Z] Platform:      linux
+[debug] [2025-08-12T17:58:33.039Z] Node Version:  v21.7.0
+[debug] [2025-08-12T17:58:33.039Z] Time:          Tue Aug 12 2025 18:58:33 GMT+0100 (Irish Standard Time)
+[debug] [2025-08-12T17:58:33.039Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-08-12T17:58:33.206Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-08-12T17:58:33.206Z] > authorizing via signed-in user (am404nn@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /home/mn/goweb/Gochat-ws/frontend/websock/gochat-front
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2025-08-12T17:58:33.208Z] Using project from CLI flag: gochat-react
+[debug] [2025-08-12T17:58:33.209Z] Checked if tokens are valid: true, expires at: 1755024982240
+[debug] [2025-08-12T17:58:33.209Z] Checked if tokens are valid: true, expires at: 1755024982240
+[debug] [2025-08-12T17:58:33.210Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react [none]
+[debug] [2025-08-12T17:58:33.551Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react 200
+[debug] [2025-08-12T17:58:33.551Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react {"projectId":"gochat-react","projectNumber":"366192825313","displayName":"gochat-react","name":"projects/gochat-react","resources":{"hostingSite":"gochat-react"},"state":"ACTIVE","etag":"1_10fe4482-a90d-4b73-b32a-d2b9a2350e0a"}
+[info] i  Using project gochat-react (gochat-react) 
+[info] 
+=== Hosting Setup
+[debug] [2025-08-12T17:58:33.555Z] Checked if tokens are valid: true, expires at: 1755024982240
+[debug] [2025-08-12T17:58:33.555Z] Checked if tokens are valid: true, expires at: 1755024982240
+[debug] [2025-08-12T17:58:33.555Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react [none]
+[debug] [2025-08-12T17:58:33.755Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react 200
+[debug] [2025-08-12T17:58:33.755Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react {"projectId":"gochat-react","projectNumber":"366192825313","displayName":"gochat-react","name":"projects/gochat-react","resources":{"hostingSite":"gochat-react"},"state":"ACTIVE","etag":"1_10fe4482-a90d-4b73-b32a-d2b9a2350e0a"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 
+[debug] [2025-08-12T17:58:48.153Z] ExitPromptError: User force closed the prompt with SIGINT
+    at Interface.sigint (/home/mn/.nvm/versions/node/v21.7.0/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:101:37)
+    at Interface.emit (node:events:519:28)
+    at Interface.emit (node:domain:488:12)
+    at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1125:18)
+    at ReadStream.onkeypress (node:internal/readline/interface:264:20)
+    at ReadStream.emit (node:events:531:35)
+    at ReadStream.emit (node:domain:488:12)
+    at emitKeys (node:internal/readline/utils:371:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2025-08-12T17:59:18.454Z] ----------------------------------------------------------------------
+[debug] [2025-08-12T17:59:18.457Z] Command:       /home/mn/.nvm/versions/node/v21.7.0/bin/node /home/mn/.nvm/versions/node/v21.7.0/bin/firebase init hosting
+[debug] [2025-08-12T17:59:18.457Z] CLI Version:   14.12.0
+[debug] [2025-08-12T17:59:18.457Z] Platform:      linux
+[debug] [2025-08-12T17:59:18.457Z] Node Version:  v21.7.0
+[debug] [2025-08-12T17:59:18.458Z] Time:          Tue Aug 12 2025 18:59:18 GMT+0100 (Irish Standard Time)
+[debug] [2025-08-12T17:59:18.458Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-08-12T17:59:18.656Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-08-12T17:59:18.656Z] > authorizing via signed-in user (am404nn@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /home/mn/goweb/Gochat-ws/frontend/websock/gochat-front
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2025-08-12T17:59:18.658Z] Using project from CLI flag: gochat-react
+[debug] [2025-08-12T17:59:18.659Z] Checked if tokens are valid: true, expires at: 1755024982240
+[debug] [2025-08-12T17:59:18.659Z] Checked if tokens are valid: true, expires at: 1755024982240
+[debug] [2025-08-12T17:59:18.660Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react [none]
+[debug] [2025-08-12T17:59:18.996Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react 200
+[debug] [2025-08-12T17:59:18.996Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react {"projectId":"gochat-react","projectNumber":"366192825313","displayName":"gochat-react","name":"projects/gochat-react","resources":{"hostingSite":"gochat-react"},"state":"ACTIVE","etag":"1_10fe4482-a90d-4b73-b32a-d2b9a2350e0a"}
+[info] i  Using project gochat-react (gochat-react) 
+[info] 
+=== Hosting Setup
+[debug] [2025-08-12T17:59:18.999Z] Checked if tokens are valid: true, expires at: 1755024982240
+[debug] [2025-08-12T17:59:18.999Z] Checked if tokens are valid: true, expires at: 1755024982240
+[debug] [2025-08-12T17:59:18.999Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react [none]
+[debug] [2025-08-12T17:59:19.230Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react 200
+[debug] [2025-08-12T17:59:19.230Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/gochat-react {"projectId":"gochat-react","projectNumber":"366192825313","displayName":"gochat-react","name":"projects/gochat-react","resources":{"hostingSite":"gochat-react"},"state":"ACTIVE","etag":"1_10fe4482-a90d-4b73-b32a-d2b9a2350e0a"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 
+[debug] [2025-08-12T18:08:52.602Z] ExitPromptError: User force closed the prompt with SIGINT
+    at Interface.sigint (/home/mn/.nvm/versions/node/v21.7.0/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:101:37)
+    at Interface.emit (node:events:519:28)
+    at Interface.emit (node:domain:488:12)
+    at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1125:18)
+    at ReadStream.onkeypress (node:internal/readline/interface:264:20)
+    at ReadStream.emit (node:events:531:35)
+    at ReadStream.emit (node:domain:488:12)
+    at emitKeys (node:internal/readline/utils:371:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+[error] 
+[error] Error: An unexpected error has occurred.
