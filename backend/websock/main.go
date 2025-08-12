@@ -53,7 +53,7 @@ func main() {
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.Logger)
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("Hello World!!!! Im on GCP"))
+			w.Write([]byte("Hello World!!!!! Im on GCP"))
 		})
 		r.Get("/ws/{hubid}", handler.Webshandler)
 		r.Get("/roomlist", handler.ListRoomsHandler)
