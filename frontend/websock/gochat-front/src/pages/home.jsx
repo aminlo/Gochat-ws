@@ -56,7 +56,7 @@ const Home = () => {
                 <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center text-white px-4">
                         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold drop-shadow">
-                            Chat in real-time. Simple. Fast. Fun.
+                            Chat in real-time. Simple. Fast. Fun!
                         </h1>
                         <p className="mt-3 text-sm sm:text-base opacity-95 max-w-2xl mx-auto">
                             Create your own room, invite friends, or jump into public rooms. No complications, just conversations.
