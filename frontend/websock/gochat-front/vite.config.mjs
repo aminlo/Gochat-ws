@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-    base: './',
+    base: '/gochat-front-react/',
     plugins: [react(), tailwindcss()],
     server: {
         port: 3005,

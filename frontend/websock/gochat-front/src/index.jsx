@@ -15,7 +15,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <UserProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/gochat-front-react">
         <Routes>
           <Route path="/">
             <Route index element={<Home />} />
