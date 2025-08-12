@@ -1,0 +1,12 @@
+-- +goose Up
+CREATE TABLE USERS (
+    id TEXT PRIMARY KEY, 
+    username TEXT NOT NULL UNIQUE, 
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    email TEXT NOT NULL UNIQUE,
+    hashed_password TEXT NOT NULL DEFAULT 'unset'
+);
+
+-- +goose Down
+DROP TABLE IF EXISTS users;
