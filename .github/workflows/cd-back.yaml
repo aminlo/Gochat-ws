@@ -43,7 +43,7 @@ jobs:
           - name: Build and push Docker image to Artifact Registry
             run: |
               IMAGE_NAME=us-central1-docker.pkg.dev/gochat-proj/gochat-ar-repo/gochat
-              gcloud builds submit --tag $IMAGE_NAME:latest .
+              gcloud builds submit --tag $IMAGE_NAME:latest --dockerfile=backend/websock/Dockerfile .
               gcloud container images add-tag $IMAGE_NAME:latest $IMAGE_NAME:v1
 
           - name: Download Goose
