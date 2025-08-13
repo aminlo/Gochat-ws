@@ -16,7 +16,7 @@ export async function Createchat(hubname) {
 }
 
 export async function Listrooms() {
-    const response = await fetch(`/${API_URL}/au/ownrooms`, {
+    const response = await fetch(`${API_URL}/au/ownrooms`, {
         method: 'GET',
         credentials: 'include',
         headers: {
