@@ -18,8 +18,8 @@ const WSChat = () => {
         if (!hubId || loading) return;
         const API_URL = "gochat-1064103315272.us-central1.run.app";
         const websUrl = user
-            ? `ws://${API_URL}/au/ws/${hubId}`
-            : `ws://${API_URL}/ws/${hubId}`;
+            ? `wss://${API_URL}/au/ws/${hubId}`
+            : `wss://${API_URL}/ws/${hubId}`;
         const ws = new WebSocket(websUrl);
         wsRef.current = ws;
 
