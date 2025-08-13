@@ -85,7 +85,7 @@ func (cfg *Config) Userlogin(w http.ResponseWriter, r *http.Request) {
 		Value:    jwtmade,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 		Expires:  time.Now().Add(3600 * time.Second),
 	})
