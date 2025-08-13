@@ -13,7 +13,8 @@ const Home = () => {
         const fetchRooms = async () => {
             try {
                 setLoading(true);
-                const res = await fetch("http://localhost:3000/roomlist");
+                const API_URL = `https://gochat-1064103315272.us-central1.run.app`;
+                const res = await fetch(`${API_URL}/roomlist`);
                 if (!res.ok) throw new Error("Failed to load rooms");
                 const data = await res.json();
                 setRooms(Array.isArray(data) ? data.slice(0, 3) : []);

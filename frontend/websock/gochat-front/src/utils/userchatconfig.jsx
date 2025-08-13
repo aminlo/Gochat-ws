@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000';
+const API_URL = `https://gochat-1064103315272.us-central1.run.app`;
 
 export async function Createchat(hubname) {
     const response = await fetch(`${API_URL}/au/create`, {
@@ -16,7 +16,7 @@ export async function Createchat(hubname) {
 }
 
 export async function Listrooms() {
-    const response = await fetch(`${API_URL}/au/ownrooms`, {
+    const response = await fetch(`/${API_URL}/au/ownrooms`, {
         method: 'GET',
         credentials: 'include',
         headers: {
