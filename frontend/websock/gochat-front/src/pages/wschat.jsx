@@ -16,10 +16,10 @@ const WSChat = () => {
 
     useEffect(() => {
         if (!hubId || loading) return;
-
+        const API_URL = "gochat-1064103315272.us-central1.run.app";
         const websUrl = user
-            ? `ws://localhost:3000/au/ws/${hubId}`
-            : `ws://localhost:3000/ws/${hubId}`;
+            ? `ws://${API_URL}/au/ws/${hubId}`
+            : `ws://${API_URL}/ws/${hubId}`;
         const ws = new WebSocket(websUrl);
         wsRef.current = ws;
 

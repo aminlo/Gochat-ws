@@ -1,6 +1,6 @@
 const usepingAuthEndpoint = async () => {
     try {
-        const response = await fetch('http://localhost:3000', {
+        const response = await fetch(`https://gochat-1064103315272.us-central1.run.app`, {
             method: 'GET',
         });
         if (!response.ok) {

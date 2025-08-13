@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:3000';
+const API_URL = `https://gochat-1064103315272.us-central1.run.app`;
 
 export async function signup(email, username, password) {
     const response = await fetch(`${API_URL}/singup`, {
