@@ -12,8 +12,8 @@ const RoomDirectory = () => {
     const fetchRooms = async () => {
         setLoading(true);
         try {
-            const API_URL = "https://gochat-1064103315272.us-central1.run.app";
-            const res = await fetch(`http://${API_URL}/roomlist`);
+            const API_URL = "gochat-1064103315272.us-central1.run.app";
+            const res = await fetch(`https://${API_URL}/roomlist`);
             if (!res.ok) throw new Error("Failed to fetch rooms");
             const data = await res.json();
             if (data.length === 0) {
